@@ -1,0 +1,19 @@
+# systemd service for managing all 389ds autoconfiguration.
+
+[Unit]
+Description=389 Directory Server Configuration Autodiscovery
+#Requires=dirsrv.target
+PartOf=dirsrv.target
+ReloadPropagatedFrom=dirsrv.target
+Before=dirsrv@.service
+After=firewalld.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/device-389ds-autodiscovery
+ExecReload=/bin/bash /usr/libexec/device-389ds-autodiscovery
+RemainAfterExit=on
+
+[Install]
+WantedBy=multi-user.target
+

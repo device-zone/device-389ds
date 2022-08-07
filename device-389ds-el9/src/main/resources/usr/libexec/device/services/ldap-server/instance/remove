@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+if [ "$1" == "--" ]; then
+
+  /usr/libexec/device-set --mark instance --hostname instance "$@"
+
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-autodiscovery.service
+
+elif [ "$1" == "-c" ]; then
+
+  /usr/libexec/device-set --mark instance --hostname instance "$@"
+
+fi
+
