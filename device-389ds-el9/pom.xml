@@ -191,6 +191,7 @@
           </preremoveScriptlet>
           <requires>
             <require>389-ds-base</require>
+            <require>expect</require>
           </requires>
         </configuration>
       </plugin>

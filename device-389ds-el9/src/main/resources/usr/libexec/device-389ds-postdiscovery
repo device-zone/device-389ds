@@ -46,7 +46,11 @@ while read line; do
     # add instance
     logger -t dirsrv-postdiscovery "adding directory server backend ${bename} with suffix ${suffix} to instance ${instance}..."
     dsconf "ldapi://%2frun%2fslapd-${instance}.socket" backend create --suffix "${suffix}" --be-name "${bename}" || echo "Could not create suffix" > "$line/error"
-    logger -t dirsrv-postdiscovery "added directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
+    if test ! -f "$line/error"; then
+      logger -t dirsrv-postdiscovery "added directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
+    else
+      logger -t dirsrv-postdiscovery "failed to add directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
+    fi
 
     rm -f "$line/added"
 
@@ -64,9 +68,27 @@ while read line; do
     # remove instance, but only if no error was created making the database
     if test ! -f "$line/error" -a -d "/etc/dirsrv/slapd-${instance}"; then
       logger -t dirsrv-postdiscovery "removing directory server backend ${bename} with suffix ${suffix} to instance ${instance}..."
-# fixme: Type 'Yes I am sure' to continue: sigh
-      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" backend delete "${bename}"
-      logger -t dirsrv-postdiscovery "removed directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
+      expect <<- EOF
+set timeout -1
+spawn dsconf "ldapi://%2frun%2fslapd-${instance}.socket" backend delete "${bename}"
+match_max 100000
+expect {
+  "Type 'Yes I am sure' to continue: " {
+    send -- "Yes I am sure"
+    expect -exact "Yes I am sure"
+    send -- "\r"
+    expect eof
+  }
+  eof {
+    exit 1
+  }
+}
+EOF
+      if [ $? -eq 0 ]; then
+        logger -t dirsrv-postdiscovery "removed directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
+      else
+        logger -t dirsrv-postdiscovery "failed to remove directory server backend ${bename} with suffix ${suffix} to instance ${instance}, forgetting this suffix."
+      fi
     fi
 
     # remove folder
