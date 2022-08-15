@@ -5,13 +5,13 @@ umask 0002
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --set index --index index --required --hostname name --hostname instance --distinguished-name suffix "$@"
+  /usr/libexec/device-set --set index --index index --hostname instance --port port --fqdn tls-dns --required --fqdn hostname "$@"
 
   /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-postdiscovery.service
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --set index --index index --required --hostname name --hostname instance --distinguished-name suffix "$@"
+  /usr/libexec/device-set --set index --index index --hostname instance --port port --fqdn tls-dns --required --fqdn hostname "$@"
 
 fi
 
