@@ -54,12 +54,13 @@ while read line; do
   fi
   suffix="$(head $line/suffix.txt)"
 
-  instance="$(head $line/instance.txt)"
+  if [ ! -e "$line/instance.d/instance.txt" ]; then
+    continue;
+  fi
+  instance="$(head $line/instance.d/instance.txt)"
 
   # add new instances
   if test -f "$line/added"; then
-
-    instance="$(head $line/instance.txt)"
 
     if test ! -d "/etc/dirsrv/slapd-${instance}"; then
       logger -t dirsrv-postdiscovery "ignoring directory server backend ${bename} with suffix ${suffix}: instance ${instance} does not exist."
@@ -85,8 +86,6 @@ while read line; do
 
   # remove old instances
   elif test -f "$line/removed"; then
-
-    instance="$(head $line/instance.txt)"
 
     # remove instance, but only if no error was created making the database
     if test ! -f "$line/error" -a -d "/etc/dirsrv/slapd-${instance}"; then

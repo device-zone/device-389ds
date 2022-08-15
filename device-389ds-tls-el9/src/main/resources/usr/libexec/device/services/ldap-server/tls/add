@@ -8,13 +8,13 @@ trap 'rm -rf -- "${tmpdir}"' EXIT
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --add index --index index --hostname instance --port port --fqdn tls-dns --required --fqdn hostname "$@"
+  /usr/libexec/device-set --add index --index index --port port --fqdn tls-dns --required --fqdn hostname --relation-base /etc/device/services/ldap-server/instance --relation-name instance --relation-suffix .txt --relation instance "$@"
 
   /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-postdiscovery.service
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --add index --index index --hostname instance --port port --fqdn tls-dns --required --fqdn hostname "$@"
+  /usr/libexec/device-set --add index --index index --port port --fqdn tls-dns --required --fqdn hostname --relation-base /etc/device/services/ldap-server/instance --relation-name instance --relation-suffix .txt --relation instance "$@" | cat
 
 fi
 
