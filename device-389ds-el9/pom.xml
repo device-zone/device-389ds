@@ -100,6 +100,20 @@
               </sources>
             </mapping>
             <mapping>
+              <directory>/usr/libexec/device-389ds-autodiscovery.d</directory>
+              <directoryIncluded>true</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+            </mapping>
+            <mapping>
+              <directory>/usr/libexec/device-389ds-postdiscovery.d</directory>
+              <directoryIncluded>true</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+            </mapping>
+            <mapping>
               <directory>/usr/lib/systemd/system</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>644</filemode>

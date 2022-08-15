@@ -122,3 +122,8 @@ EOF
 
 done
 
+#
+# Run all scripts
+
+find "$0.d" -type f -executable -exec {} \; 2&> /dev/null || true
+
