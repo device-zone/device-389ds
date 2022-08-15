@@ -14,7 +14,30 @@ cd /tmp
 
 
 #
-# Add/remove ldap instances
+# Update ldap instances
+
+find /etc/device/services/ldap-server/instance/ -mindepth 1 -maxdepth 1 -type l | \
+while read line; do
+
+  if test ! -f "$line/instance.txt"; then
+    continue;
+  fi
+  instance="$(head $line/instance.txt)"
+
+  # make sure autobind is enabled
+  logger -t dirsrv-postdiscovery "enabling directory server autobind on instance ${instance}..."
+  dsconf "ldapi://%2frun%2fslapd-${instance}.socket" config replace nsslapd-ldapimaptoentries=on nsslapd-ldapiuidnumbertype=uidNumber nsslapd-ldapigidnumbertype=gidNumber nsslapd-ldapientrysearchbase=ou=people,cn=config || echo "Could not enable autobind" > "$line/error"
+  if test ! -f "$line/error"; then
+    logger -t dirsrv-postdiscovery "enabled directory server autobind on instance ${instance}."
+  else
+    logger -t dirsrv-postdiscovery "failed to enable directory server autobind for instance ${instance}."
+  fi
+
+done
+
+
+#
+# Add/update/remove ldap backends/suffixes
 
 find /etc/device/services/ldap-server/suffix/ -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
@@ -68,7 +91,7 @@ while read line; do
     # remove instance, but only if no error was created making the database
     if test ! -f "$line/error" -a -d "/etc/dirsrv/slapd-${instance}"; then
       logger -t dirsrv-postdiscovery "removing directory server backend ${bename} with suffix ${suffix} to instance ${instance}..."
-      expect <<- EOF
+      expect <<- EOF || echo "Could not remove suffix" > "$line/error"
 set timeout -1
 spawn dsconf "ldapi://%2frun%2fslapd-${instance}.socket" backend delete "${bename}"
 match_max 100000
@@ -84,7 +107,7 @@ expect {
   }
 }
 EOF
-      if [ $? -eq 0 ]; then
+      if test ! -f "$line/error"; then
         logger -t dirsrv-postdiscovery "removed directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
       else
         logger -t dirsrv-postdiscovery "failed to remove directory server backend ${bename} with suffix ${suffix} to instance ${instance}, forgetting this suffix."
