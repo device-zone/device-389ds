@@ -3,4 +3,161 @@
 #
 # Add/update/remove TLS
 
+find /etc/device/services/ldap-server/tls/ -mindepth 1 -maxdepth 1 -type l | \
+while read line; do
+
+  if [ ! -e "$line/instance.d/instance.txt" ]; then
+    continue;
+  fi
+  instance="$(head $line/instance.d/instance.txt)"
+
+  if [ ! -e "$line/hostname.txt" ]; then
+    continue;
+  fi
+  hostname="$(head $line/hostname.txt)"
+
+  if [ -e "$line/tls_dns.txt" ]; then
+    tls_dns="$(head $line/tls_dns.txt)"
+  else
+    tls_dns="${hostname}"
+  fi
+
+  # add/update new tls?
+  if test -f "$line/added" -o -f "$line/updated"; then
+
+    rm -f "$line/error"
+
+    if test -f "$line/disabled.bin"; then
+
+      logger -t dirsrv-postdiscovery "disabling directory server tls on instance ${instance}..."
+
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security disable || echo "Could not disable tls" > "$line/error"
+
+      if test ! -f "$line/error"; then
+        logger -t dirsrv-postdiscovery "disabled directory server tls on instance ${instance}."
+      else
+        logger -t dirsrv-postdiscovery "failed to disable directory server tls for instance ${instance}."
+      fi
+
+    else
+
+      logger -t dirsrv-postdiscovery "importing directory server certificate/key on instance ${instance}..."
+
+      redwax-tool --pem-in="/etc/pki/tls/private/*" \
+                  --pem-in="/etc/pki/tls/certs/*" \
+                  --filter=verify \
+                  --filter-hostname "${tls_dns}" \
+                  --label-out Server-Cert \
+                  --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
+                  --auto-out \
+                  --nss-out=/etc/dirsrv/slapd-seawitch/ || echo "Could not import cert/key for tls" > "$line/error"
+
+      if test ! -f "$line/error"; then
+        logger -t dirsrv-postdiscovery "imported directory server certificate/key on instance ${instance}."
+      else
+        logger -t dirsrv-postdiscovery "failed to import directory server certificate/key for instance ${instance}."
+        continue
+      fi
+
+      logger -t dirsrv-postdiscovery "setting directory server tls on instance ${instance}..."
+
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security set \
+        --security on \
+        --secure-port 636 \
+        --tls-protocol-min TLS1.2 \
+        --allow-insecure-ciphers off \
+        --allow-weak-dh-param off || echo "Could not set tls" > "$line/error"
+
+      if test ! -f "$line/error"; then
+        logger -t dirsrv-postdiscovery "set directory server tls on instance ${instance}."
+      else
+        logger -t dirsrv-postdiscovery "failed to set directory server tls for instance ${instance}."
+        continue
+      fi
+
+      logger -t dirsrv-postdiscovery "enabling directory server tls on instance ${instance}..."
+
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security enable || echo "Could not enable tls" > "$line/error"
+
+      if test ! -f "$line/error"; then
+        logger -t dirsrv-postdiscovery "enabled directory server tls on instance ${instance}."
+      else
+        logger -t dirsrv-postdiscovery "failed to enable directory server tls for instance ${instance}."
+        continue
+      fi
+
+      logger -t dirsrv-postdiscovery "restarting directory server on instance ${instance}..."
+
+      systemctl restart "dirsrv@${instance}"
+
+      if test ! -f "$line/error"; then
+        logger -t dirsrv-postdiscovery "restarted directory server on instance ${instance}."
+      else
+        logger -t dirsrv-postdiscovery "failed to restart directory server for instance ${instance}."
+        continue
+      fi
+
+      if command -v /usr/bin/firewall-cmd 2>/dev/null; then
+        logger -t "$0" "Notice: enabling firewall for ldaps..."
+        /usr/bin/firewall-cmd --quiet --zone=public --add-service=ldaps
+        logger -t "$0" "Notice: enabled firewall for ldaps."
+      fi
+
+    fi
+
+    if test -f "$line/added"; then
+      rm -f "$line/added"
+    else
+      rm -f "$line/updated"
+    fi
+
+  # remove old instances
+  elif test -f "$line/removed"; then
+
+    target=$(readlink -f "$line")
+
+    if test ! -f "$line/disabled.bin"; then
+
+      logger -t dirsrv-postdiscovery "disabling directory server tls on instance ${instance}..."
+
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security disable || echo "Could not disable tls" > "$line/error"
+
+      if test ! -f "$line/error"; then
+        logger -t dirsrv-postdiscovery "disabled directory server tls on instance ${instance}."
+      else
+        logger -t dirsrv-postdiscovery "failed to disable directory server tls for instance ${instance}."
+      fi
+
+      if command -v /usr/bin/firewall-cmd 2>/dev/null; then
+        logger -t "$0" "Notice: disabling firewall for ldaps..."
+        /usr/bin/firewall-cmd --quiet --zone=public --remove-service=ldaps
+        logger -t "$0" "Notice: disabled firewall for ldaps."
+      fi
+
+    fi
+
+    # remove folder
+    rm -f "${target}"/*
+    rmdir "${target}"
+    rm -f "${line}"
+
+  # ordinary instance, make sure world can see it
+  else
+
+    if test ! -f "$line/disabled.bin"; then
+      if command -v /usr/bin/firewall-cmd 2>/dev/null; then
+        logger -t "$0" "Notice: disabling firewall for ldaps..."
+        /usr/bin/firewall-cmd --quiet --zone=public --add-service=ldaps
+        logger -t "$0" "Notice: disabled firewall for ldaps."
+      fi
+    else
+      if command -v /usr/bin/firewall-cmd 2>/dev/null; then
+        logger -t "$0" "Notice: enabling firewall for ldaps..."
+        /usr/bin/firewall-cmd --quiet --zone=public --remove-service=ldaps
+        logger -t "$0" "Notice: enabled firewall for ldaps."
+      fi
+    fi
+  fi
+
+done
 
