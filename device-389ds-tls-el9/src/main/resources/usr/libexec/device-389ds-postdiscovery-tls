@@ -146,15 +146,15 @@ while read line; do
 
     if test ! -f "$line/disabled.bin"; then
       if command -v /usr/bin/firewall-cmd 2>/dev/null; then
-        logger -t "$0" "Notice: disabling firewall for ldaps..."
+        logger -t "$0" "Notice: enabling firewall for ldaps..."
         /usr/bin/firewall-cmd --quiet --zone=public --add-service=ldaps
-        logger -t "$0" "Notice: disabled firewall for ldaps."
+        logger -t "$0" "Notice: enabled firewall for ldaps."
       fi
     else
       if command -v /usr/bin/firewall-cmd 2>/dev/null; then
-        logger -t "$0" "Notice: enabling firewall for ldaps..."
+        logger -t "$0" "Notice: disabling firewall for ldaps..."
         /usr/bin/firewall-cmd --quiet --zone=public --remove-service=ldaps
-        logger -t "$0" "Notice: enabled firewall for ldaps."
+        logger -t "$0" "Notice: disabled firewall for ldaps."
       fi
     fi
   fi
