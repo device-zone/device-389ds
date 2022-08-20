@@ -26,12 +26,27 @@ while read line; do
 
   # make sure autobind is enabled
   logger -t dirsrv-postdiscovery "enabling directory server autobind on instance ${instance}..."
-  dsconf "ldapi://%2frun%2fslapd-${instance}.socket" config replace nsslapd-ldapimaptoentries=on nsslapd-ldapiuidnumbertype=uidNumber nsslapd-ldapigidnumbertype=gidNumber nsslapd-ldapientrysearchbase=ou=people,cn=config || echo "Could not enable autobind" > "$line/error"
-  if test ! -f "$line/error"; then
-    logger -t dirsrv-postdiscovery "enabled directory server autobind on instance ${instance}."
-  else
-    logger -t dirsrv-postdiscovery "failed to enable directory server autobind for instance ${instance}."
-  fi
+  retry --until=success dsconf "ldapi://%2frun%2fslapd-${instance}.socket" config replace nsslapd-ldapimaptoentries=on nsslapd-ldapiuidnumbertype=uidNumber nsslapd-ldapigidnumbertype=gidNumber nsslapd-ldapientrysearchbase=ou=people,cn=config || echo "Could not enable autobind"
+  logger -t dirsrv-postdiscovery "enabled directory server autobind on instance ${instance}."
+
+  # make sure replication is present
+  logger -t dirsrv-postdiscovery "enabling directory server replication on instance ${instance}..."
+
+  replication_ldif="replication.ldif"
+
+  cat > ${replication_ldif} <<-EOF
+# create the supplier bind dn
+dn: cn=Replication Managers,cn=config
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: Replication Managers
+nsIdleTimeout: 0
+
+EOF
+
+  cat ${replication_ldif} | /usr/bin/ldapadd -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL 2> /dev/null || true
+
+  logger -t dirsrv-postdiscovery "enabled directory server replication on instance ${instance}."
 
 done
 
