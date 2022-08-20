@@ -69,7 +69,7 @@ while read line; do
 
     # add instance
     logger -t dirsrv-postdiscovery "adding directory server backend ${bename} with suffix ${suffix} to instance ${instance}..."
-    dsconf "ldapi://%2frun%2fslapd-${instance}.socket" backend create --suffix "${suffix}" --be-name "${bename}" || echo "Could not create suffix" > "$line/error"
+    dsconf "ldapi://%2frun%2fslapd-${instance}.socket" backend create --suffix "${suffix}" --be-name "${bename}" --create-suffix || echo "Could not create suffix" > "$line/error"
     if test ! -f "$line/error"; then
       logger -t dirsrv-postdiscovery "added directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
     else
