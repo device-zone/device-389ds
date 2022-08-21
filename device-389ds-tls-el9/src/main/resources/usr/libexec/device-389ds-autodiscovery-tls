@@ -11,6 +11,10 @@ while read line; do
   fi
   instance="$(head $line/instance.d/instance.txt)"
 
+  if [ "${instance}" != "${1}" ]; then
+    continue;
+  fi
+
   logger -t "$0"  "Notice: creating directory server certmap.conf for ${instance}..."
 
   certmap_conf=`mktemp /etc/dirsrv/slapd-${instance}/certmap.conf.XXXXXX`

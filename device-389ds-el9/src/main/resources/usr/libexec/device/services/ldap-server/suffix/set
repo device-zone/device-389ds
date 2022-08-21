@@ -7,7 +7,21 @@ if [ "$1" == "--" ]; then
 
   /usr/libexec/device-set --set index --index index --required --hostname name --distinguished-name suffix --relation-base /etc/device/services/ldap-server/instance --relation-name instance --relation-suffix .txt --relation instance "$@"
 
-  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-postdiscovery.service
+  find /etc/device/services/ldap-server/instance/ -mindepth 1 -maxdepth 1 -type l | \
+  while read line; do
+
+    if test -f "$line/disabled.bin"; then
+      continue;
+    fi
+
+    if test ! -f "$line/instance.txt"; then
+      continue;
+    fi
+    instance="$(head $line/instance.txt)"
+
+    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart "dirsrv-postdiscovery@${instance}.service"
+  
+  done
 
 elif [ "$1" == "-c" ]; then
 

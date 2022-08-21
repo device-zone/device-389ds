@@ -1,0 +1,18 @@
+#!/bin/bash
+  
+#
+# 389 Directory Server Postdiscovery - autobind
+# =============================================
+#
+# This script adds autobind to instances.
+
+set -e
+
+instance="${1}"
+
+# make sure autobind is enabled
+logger -t "dirsrv-postdiscovery@${instance}" "enabling directory server autobind on instance ${instance}..."
+retry --until=success dsconf "ldapi://%2frun%2fslapd-${instance}.socket" config replace nsslapd-ldapimaptoentries=on nsslapd-ldapiuidnumbertype=uidNumber nsslapd-ldapigidnumbertype=gidNumber nsslapd-ldapientrysearchbase=ou=people,cn=config || echo "Could not enable autobind"
+logger -t "dirsrv-postdiscovery@${instance}" "enabled directory server autobind on instance ${instance}."
+
+

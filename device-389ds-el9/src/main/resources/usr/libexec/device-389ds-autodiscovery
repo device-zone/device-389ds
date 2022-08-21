@@ -22,7 +22,33 @@ cleanup_before_exit () {
 tmpdir=`mktemp -d 2>/dev/null || mktemp -d -t 'tmpdir'`
 # trap catches the exit signal and runs the specified function
 trap cleanup_before_exit EXIT
+# be in our directory
+cd "${tmpdir}"
 
+
+#
+# Per instance? Run all scripts
+
+if [ $# -ne 0 ]; then
+
+  instance="${1}"
+
+  logger -t "dirsrv-autodiscovery@${instance}" "running autodiscovery for directory server instance ${instance}..."
+
+  find "$0.d" -type f -executable | sort | \
+  while read x; do
+    "$x" "${instance}" < /dev/null || touch error;
+  done
+
+  if test ! -f "error"; then
+    logger -t "dirsrv-autodiscovery@${instance}" "completed autodiscovery for directory server instance ${instance}."
+    exit 0
+  else
+    logger -t "dirsrv-autodiscovery@${instance}" "failed autodiscovery for directory server instance ${instance}."
+    exit 1
+  fi
+
+fi
 
 
 #
@@ -310,8 +336,27 @@ while read line; do
     create_instance "${instance}"
     logger -t dirsrv-autodiscovery "created directory server instance ${instance}."
 
-    systemctl enable "dirsrv@${instance}"
-    systemctl start "dirsrv@${instance}"
+    if test -f "$line/disabled.bin"; then
+
+      systemctl disable "dirsrv-autodiscovery@${instance}"
+      systemctl disable "dirsrv@${instance}"
+      systemctl disable "dirsrv-postdiscovery@${instance}"
+
+      systemctl stop "dirsrv-autodiscovery@${instance}"
+      systemctl stop "dirsrv@${instance}"
+      systemctl stop "dirsrv-postdiscovery@${instance}"
+
+    else
+
+      systemctl enable "dirsrv-autodiscovery@${instance}"
+      systemctl enable "dirsrv@${instance}"
+      systemctl enable "dirsrv-postdiscovery@${instance}"
+
+      systemctl start "dirsrv-autodiscovery@${instance}"
+      systemctl start "dirsrv@${instance}"
+      systemctl start "dirsrv-postdiscovery@${instance}"
+
+    fi
 
     rm -f "$line/added"
 
@@ -320,17 +365,45 @@ while read line; do
 
     instance="$(head $line/instance.txt)"
 
+    if test -f "$line/disabled.bin"; then
+
+      systemctl disable "dirsrv-autodiscovery@${instance}"
+      systemctl disable "dirsrv@${instance}"
+      systemctl disable "dirsrv-postdiscovery@${instance}"
+
+      systemctl stop "dirsrv-autodiscovery@${instance}"
+      systemctl stop "dirsrv@${instance}"
+      systemctl stop "dirsrv-postdiscovery@${instance}"
+
+    else
+
+      systemctl enable "dirsrv-autodiscovery@${instance}"
+      systemctl enable "dirsrv@${instance}"
+      systemctl enable "dirsrv-postdiscovery@${instance}"
+
+      systemctl start "dirsrv-autodiscovery@${instance}"
+      systemctl start "dirsrv@${instance}"
+      systemctl start "dirsrv-postdiscovery@${instance}"
+
+    fi
+
+    rm -f "$line/updated"
+
   # remove old instances
   elif test -f "$line/removed"; then
 
-    # stop instance, but only if no error was created making the instance
-    if test ! -f "$line/error"; then
-      logger -t dirsrv-autodiscovery "removing directory server instance ${instance}..."
-      systemctl stop "dirsrv@${instance}"
-      systemctl disable "dirsrv@${instance}"
-      dsctl "${instance}" remove --do-it
-      logger -t dirsrv-autodiscovery "removed directory server instance ${instance}."
-    fi
+    logger -t dirsrv-autodiscovery "removing directory server instance ${instance}..."
+
+    systemctl disable "dirsrv-autodiscovery@${instance}"
+    systemctl disable "dirsrv@${instance}"
+    systemctl disable "dirsrv-postdiscovery@${instance}"
+
+    systemctl stop "dirsrv-autodiscovery@${instance}"
+    systemctl stop "dirsrv@${instance}"
+    systemctl stop "dirsrv-postdiscovery@${instance}"
+
+    dsctl "${instance}" remove --do-it
+    logger -t dirsrv-autodiscovery "removed directory server instance ${instance}."
 
     # remove folder
     rm -f "${target}"/*
@@ -341,9 +414,4 @@ while read line; do
 
 done
 
-
-#
-# Run all scripts
-
-find "$0.d" -type f -executable -exec {} \; || true
 

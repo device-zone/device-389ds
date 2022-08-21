@@ -11,6 +11,10 @@ while read line; do
   fi
   instance="$(head $line/instance.d/instance.txt)"
 
+  if [ "${instance}" != "${1}" ]; then
+    continue;
+  fi
+
   if [ ! -e "$line/hostname.txt" ]; then
     continue;
   fi

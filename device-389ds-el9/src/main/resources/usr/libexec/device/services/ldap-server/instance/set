@@ -5,13 +5,13 @@ umask 0002
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --set instance --hostname instance "$@"
+  /usr/libexec/device-set --set instance --hostname instance --polar disabled "$@"
 
   /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-autodiscovery.service
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --set instance --hostname instance "$@"
+  /usr/libexec/device-set --set instance --hostname instance --polar disabled "$@"
 
 fi
 

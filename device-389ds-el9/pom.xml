@@ -114,6 +114,23 @@
               <groupname>root</groupname>
             </mapping>
             <mapping>
+              <directory>/usr/libexec/device-389ds-postdiscovery.d</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/usr/libexec/device-389ds-postdiscovery-autobind</location>
+                  <destination>10-autobind</destination>
+                </source>
+                <source>
+                  <location>target/classes/usr/libexec/device-389ds-postdiscovery-suffix</location>
+                  <destination>20-suffix</destination>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
               <directory>/usr/lib/systemd/system</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>644</filemode>
@@ -125,8 +142,12 @@
                   <destination>dirsrv-autodiscovery.service</destination>
                 </source>
                 <source>
-                  <location>target/classes/usr/lib/systemd/system/dirsrv-postdiscovery.service</location>
-                  <destination>dirsrv-postdiscovery.service</destination>
+                  <location>target/classes/usr/lib/systemd/system/dirsrv-autodiscovery@.service</location>
+                  <destination>dirsrv-autodiscovery@.service</destination>
+                </source>
+                <source>
+                  <location>target/classes/usr/lib/systemd/system/dirsrv-postdiscovery@.service</location>
+                  <destination>dirsrv-postdiscovery@.service</destination>
                 </source>
               </sources>
             </mapping>

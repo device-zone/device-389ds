@@ -1,0 +1,19 @@
+# systemd service for managing all 389ds postconfiguration.
+  
+[Unit]
+Description=389 Directory Server Postdiscovery %i.
+#Requires=dirsrv.target
+PartOf=dirsrv.target
+ReloadPropagatedFrom=dirsrv@%i.service
+After=dirsrv@%i.service
+After=firewalld.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/device-389ds-postdiscovery %i
+ExecReload=/bin/bash /usr/libexec/device-389ds-postdiscovery %i
+RemainAfterExit=on
+
+[Install]
+WantedBy=multi-user.target
+

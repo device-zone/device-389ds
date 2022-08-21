@@ -7,7 +7,21 @@ if [ "$1" == "--" ]; then
 
   /usr/libexec/device-set --mark index --index index "$@"
 
-  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-postdiscovery.service
+  find /etc/device/services/ldap-server/instance/ -mindepth 1 -maxdepth 1 -type l | \
+  while read line; do
+
+    if test -f "$line/disabled.bin"; then
+      continue;
+    fi
+
+    if test ! -f "$line/instance.txt"; then
+      continue;
+    fi
+    instance="$(head $line/instance.txt)"
+
+    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart "dirsrv-postdiscovery@${instance}.service"
+  
+  done
 
   /usr/libexec/device-set --reindex index --index index
 
