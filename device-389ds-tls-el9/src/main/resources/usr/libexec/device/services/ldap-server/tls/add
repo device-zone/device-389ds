@@ -14,7 +14,8 @@ if [ "$1" == "--" ]; then
       ((counter++))
       redwax-tool --quiet \
 	          --pem-in="/etc/pki/tls/private/*" \
-                  --pem-in="/etc/pki/tls/certs/*" \
+                  --pem-in="/etc/pki/tls/certs/ca-bundle.trust.crt" \
+                  --pem-in="/etc/pki/tls/certs/*.pem" \
                   --filter=verify \
                   --filter-hostname="${!counter}" || { echo "Error: could not verify a certificate matching: ${!counter}"; exit 1; }
       break;
