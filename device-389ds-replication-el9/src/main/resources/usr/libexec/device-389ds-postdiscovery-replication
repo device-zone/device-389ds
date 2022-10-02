@@ -283,15 +283,96 @@ EOF
 
     fi
 
-    rm -f "$line/error"
+    rm -f "$line/added"
 
   # update new certificates
   elif test -f "$line/updated"; then
 
-    rm -f "$line/error"
+    rm -f "$line/updated"
 
 
   fi
 
 done
+
+
+#
+# Walk through each agreement for replication, enable or disable as needed.
+#
+find /etc/device/services/ldap-server/replication/agreements/ -mindepth 1 -maxdepth 1 -type l | \
+while read line; do
+
+  if [ ! -e "$line/name.txt" ]; then
+    continue;
+  elif [ ! -e "$line/host.txt" ]; then
+    continue;
+  elif [ ! -L "$line/suffix.d" ]; then
+    continue;
+  elif [ ! -e "$line/suffix.d/suffix.txt" ]; then
+    continue;
+  elif [ ! -e "$line/suffix.d/userroot.txt" ]; then
+    continue;
+  elif [ ! -L "$line/suffix.d/instance.d" ]; then
+    continue;
+  elif [ ! -e "$line/suffix.d/instance.d/name.txt" ]; then
+    continue;
+  fi
+  instance="$(head -n 1 $line/suffix.d/instance.d/name.txt)"
+
+  if [ "${instance}" != "${1}" ]; then
+    continue;
+  fi
+
+  suffix="$(head -n 1 $line/suffix.d/suffix.txt)"
+  userroot="$(head -n 1 $line/suffix.d/userroot.txt)"
+  agreement="$(head -n 1 $line/name.txt)"
+  hostname="$(head -n 1 $line/host.txt)"
+  if [ -e "$line/port.txt" ]; then
+    port="$(head -n 1 $line/port.txt)"
+  else
+    port="636"
+  fi
+
+  # remove old agreements
+  if test -f "$line/removed"; then
+
+    target=$(readlink -f "$line")
+
+    dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt delete --suffix "${suffix}" "${agreement}"
+
+    # remove folder
+    rm -f "${target}"/*
+    rmdir "${target}"
+    rm -f "${line}"
+
+  # add new agreements
+  elif test -f "$line/added"; then
+
+    dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt create --suffix "${suffix}" --host "${hostname}" --port "${port}" --conn-protocol "LDAPS" --bind-method "SSLCLIENTAUTH" "${agreement}"
+
+    if test -f "$line/disabled.bin"; then
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt disable --suffix "${suffix}" "${agreement}"
+    fi
+
+    rm -f "$line/added"
+
+  # update existing agreements
+  elif test -f "$line/updated"; then
+
+    rm -f "$line/error"
+
+    dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt set --suffix "${suffix}" --host "${hostname}" --port "${port}" --conn-protocol "LDAPS" --bind-method "SSLCLIENTAUTH" "${agreement}"
+
+    if test -f "$line/disabled.bin"; then
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt disable --suffix "${suffix}" "${agreement}"
+    else
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt enable --suffix "${suffix}" "${agreement}"
+    fi
+
+    rm -f "$line/updated"
+
+  fi
+
+done
+
 

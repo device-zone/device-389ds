@@ -165,6 +165,38 @@
                 </source>
               </sources>
             </mapping>
+            <mapping>
+              <directory>/etc/device/services/ldap-server/replication/agreements</directory>
+              <directoryIncluded>true</directoryIncluded>
+              <filemode>2775</filemode>
+              <username>root</username>
+              <groupname>device</groupname>
+            </mapping>
+            <mapping>
+              <directory>/usr/libexec/device/services/ldap-server/replication/agreements</directory>
+              <directoryIncluded>true</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+            </mapping>
+            <mapping>
+              <directory>/usr/libexec/device/services/ldap-server/replication/agreements</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/usr/libexec/device/services/ldap-server/replication/agreements/add</location>
+                </source>
+                <source>
+                  <location>target/classes/usr/libexec/device/services/ldap-server/replication/agreements/remove</location>
+                </source>
+                <source>
+                  <location>target/classes/usr/libexec/device/services/ldap-server/replication/agreements/set</location>
+                </source>
+              </sources>
+            </mapping>
           </mappings>
           <postinstallScriptlet>
             <scriptFile>target/classes/postinstall</scriptFile>
