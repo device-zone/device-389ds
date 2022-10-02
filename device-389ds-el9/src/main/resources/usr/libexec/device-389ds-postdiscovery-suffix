@@ -27,7 +27,7 @@ while read line; do
   fi
   suffix="$(head $line/suffix.txt)"
 
-  if [ ! -e "$line/instance.d/instance.txt" ]; then
+  if [ ! -e "$line/instance.d/name.txt" ]; then
 
     # remove any orphaned configs
     if test -f "$line/removed"; then
@@ -40,7 +40,7 @@ while read line; do
 
     continue;
   fi
-  instance="$(head $line/instance.d/instance.txt)"
+  instance="$(head $line/instance.d/name.txt)"
 
   if [ "${instance}" != "${1}" ]; then
     continue;

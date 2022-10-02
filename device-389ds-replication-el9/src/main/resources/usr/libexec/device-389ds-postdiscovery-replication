@@ -67,10 +67,10 @@ while read line; do
     continue;
   elif [ ! -L "$line/suffix.d/instance.d" ]; then
     continue;
-  elif [ ! -e "$line/suffix.d/instance.d/instance.txt" ]; then
+  elif [ ! -e "$line/suffix.d/instance.d/name.txt" ]; then
     continue;
   fi
-  instance="$(head -n 1 $line/suffix.d/instance.d/instance.txt)"
+  instance="$(head -n 1 $line/suffix.d/instance.d/name.txt)"
 
   if [ "${instance}" != "${1}" ]; then
     continue;
@@ -203,10 +203,10 @@ while read line; do
     continue;
   elif [ ! -L "$line/suffix.d/instance.d" ]; then
     continue;
-  elif [ ! -e "$line/suffix.d/instance.d/instance.txt" ]; then
+  elif [ ! -e "$line/suffix.d/instance.d/name.txt" ]; then
     continue;
   fi
-  instance="$(head -n 1 $line/suffix.d/instance.d/instance.txt)"
+  instance="$(head -n 1 $line/suffix.d/instance.d/name.txt)"
 
   if [ "${instance}" != "${1}" ]; then
     continue;
@@ -249,8 +249,12 @@ EOF
     redwax-tool --pem-in="/etc/pki/tls/certs/*" \
                 --filter=search \
                 --filter-hostname "${tls_dns}" \
-		--no-chain-out --no-root-out --no-crl-out --no-key-out \
-                --der-out "${cert}-replicate.der" || echo "Could not find certificate for replication" > "$line/error"
+                --no-chain-out --no-root-out --no-crl-out --no-key-out \
+                --der-out "${cert}-replicate.der" \
+                --no-cert-out --chain-out --trust-out \
+                --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
+                --auto-out \
+                --nss-out=/etc/dirsrv/slapd-seawitch/ || echo "Could not find and verify certificate for replication" > "$line/error"
 
     while read usercert; do
       usercerts+="userCertificate:< file://${usercert}"$'\n'

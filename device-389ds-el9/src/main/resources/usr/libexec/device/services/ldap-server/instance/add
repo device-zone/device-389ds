@@ -8,13 +8,13 @@ trap 'rm -rf -- "${tmpdir}"' EXIT
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --add instance --hostname instance --polar disabled --required "$@"
+  /usr/libexec/device-set --add name --hostname name --polar disabled --required "$@"
 
   /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-autodiscovery.service
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --add instance --hostname instance --polar disabled --required "$@"
+  /usr/libexec/device-set --add name --hostname name --polar disabled --required "$@"
 
 fi
 

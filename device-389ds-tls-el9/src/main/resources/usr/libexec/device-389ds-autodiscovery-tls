@@ -6,10 +6,10 @@
 find /etc/device/services/ldap-server/tls/ -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
 
-  if [ ! -e "$line/instance.d/instance.txt" ]; then
+  if [ ! -e "$line/instance.d/name.txt" ]; then
     continue;
   fi
-  instance="$(head $line/instance.d/instance.txt)"
+  instance="$(head $line/instance.d/name.txt)"
 
   if [ "${instance}" != "${1}" ]; then
     continue;

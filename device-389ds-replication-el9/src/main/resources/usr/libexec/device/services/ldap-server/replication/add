@@ -17,10 +17,10 @@ if [ "$1" == "--" ]; then
       continue;
     fi
 
-    if test ! -f "$line/instance.txt"; then
+    if test ! -f "$line/name.txt"; then
       continue;
     fi
-    instance="$(head $line/instance.txt)"
+    instance="$(head $line/name.txt)"
 
     /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart "dirsrv-postdiscovery@${instance}.service"
 

@@ -311,10 +311,10 @@ while read line; do
 
   target=$(readlink -f "$line")
 
-  if test ! -f "$line/instance.txt"; then
+  if test ! -f "$line/name.txt"; then
     continue;
   fi
-  instance="$(head $line/instance.txt)"
+  instance="$(head $line/name.txt)"
 
   # add new instances
   if test -f "$line/added"; then
@@ -363,7 +363,7 @@ while read line; do
   # update instances
   elif test -f "$line/updated"; then
 
-    instance="$(head $line/instance.txt)"
+    instance="$(head $line/name.txt)"
 
     if test -f "$line/disabled.bin"; then
 
