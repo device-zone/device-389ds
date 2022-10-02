@@ -17,10 +17,10 @@ while read line; do
 
   target=$(readlink -f "$line")
 
-  if test ! -f "$line/name.txt"; then
+  if test ! -f "$line/userroot.txt"; then
     continue;
   fi
-  bename="$(head $line/name.txt)"
+  bename="$(head $line/userroot.txt)"
 
   if test ! -f "$line/suffix.txt"; then
     continue;

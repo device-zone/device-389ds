@@ -1,0 +1,293 @@
+#!/bin/bash
+
+#
+# 389 Directory Server Postdiscovery - replication
+# ================================================
+#
+# This script adds replication to instances.
+
+set -e
+
+#
+# Handle the cleanup
+# ------------------
+cleanup_before_exit () {
+  if [ -d "${tmpdir}" ]; then
+    rm -rf "${tmpdir}"
+  fi
+}
+# be in a temporay workspace (this works on linux and macosx)
+tmpdir=`mktemp -d 2>/dev/null || mktemp -d -t 'tmpdir'`
+# trap catches the exit signal and runs the specified function
+trap cleanup_before_exit EXIT
+# be in our directory
+cd "${tmpdir}"
+
+
+#
+# Add/update/remove replication
+
+instance="${1}"
+
+# make sure replication is present
+logger -t dirsrv-postdiscovery "adding replication manager on instance ${instance}..."
+
+replication_ldif="replication.ldif"
+
+cat > ${replication_ldif} <<-EOF
+# create the supplier bind dn
+dn: ou=Replication Managers,cn=config
+objectClass: top
+objectClass: organizationalUnit
+ou: Replication Managers
+
+EOF
+
+cat ${replication_ldif} | /usr/bin/ldapadd -c -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL 2> /dev/null || true
+
+logger -t dirsrv-postdiscovery "added replication manager on instance ${instance}."
+
+
+
+#
+# Walk through each entry under replication, enable or disable as needed.
+#
+find /etc/device/services/ldap-server/replication/ -mindepth 1 -maxdepth 1 -type l | \
+while read line; do
+
+  if [ ! -e "$line/replica-id.txt" ]; then
+    continue;
+  elif [ ! -e "$line/role.txt" ]; then
+    continue;
+  elif [ ! -L "$line/suffix.d" ]; then
+    continue;
+  elif [ ! -e "$line/suffix.d/suffix.txt" ]; then
+    continue;
+  elif [ ! -e "$line/suffix.d/userroot.txt" ]; then
+    continue;
+  elif [ ! -L "$line/suffix.d/instance.d" ]; then
+    continue;
+  elif [ ! -e "$line/suffix.d/instance.d/instance.txt" ]; then
+    continue;
+  fi
+  instance="$(head -n 1 $line/suffix.d/instance.d/instance.txt)"
+
+  if [ "${instance}" != "${1}" ]; then
+    continue;
+  fi
+
+  suffix="$(head -n 1 $line/suffix.d/suffix.txt)"
+  userroot="$(head -n 1 $line/suffix.d/userroot.txt)"
+  replica="$(head -n 1 $line/replica-id.txt)"
+  role="$(head -n 1 $line/role.txt)"
+
+   # remove old instances
+  if test -f "$line/removed"; then
+
+    target=$(readlink -f "$line")
+
+    if test ! -f "$line/disabled.bin"; then
+
+      logger -t dirsrv-postdiscovery "disabling directory server replication on instance ${instance} / suffix ${suffix}..."
+
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication disable --suffix "${suffix}" > /dev/null || echo "Could not disable replication on ${instance} / ${suffix}" > "$line/error"
+
+      if test ! -f "$line/error"; then
+        logger -t dirsrv-postdiscovery "disabled directory server replication on instance ${instance} / suffix ${suffix}."
+      else
+        logger -t dirsrv-postdiscovery "failed to disable directory server replication for instance ${instance} / suffix ${suffix}."
+      fi
+
+    fi
+
+    /usr/bin/ldapdelete -c -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL "ou=${userroot},ou=Replication Managers,cn=config" 2> /dev/null || true
+
+    logger -t dirsrv-postdiscovery "removed replication manager on instance ${instance}."
+
+    # remove folder
+    rm -f "${target}"/*
+    rmdir "${target}"
+    rm -f "${line}"
+
+  # add/update new replication?
+  elif test -f "$line/added" -o -f "$line/updated"; then
+
+    rm -f "$line/error"
+
+    replication_ldif="replication.ldif"
+
+    cat > ${replication_ldif} <<-EOF
+dn: ou=${userroot},ou=Replication Managers,cn=config
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: ${userroot}
+nsIdleTimeout: 0
+description: Accounts that are allowed to push replication to '${userroot}' / '${suffix}'
+
+EOF
+
+    cat ${replication_ldif} | /usr/bin/ldapadd -c -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL 2> /dev/null || true
+
+    logger -t dirsrv-postdiscovery "added replication manager on instance ${instance}."
+
+    if test -f "$line/disabled.bin"; then
+
+      logger -t dirsrv-postdiscovery "disabling directory server replication on instance ${instance} / suffix ${suffix}..."
+
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication disable --suffix "${suffix}" > /dev/null || echo "Could not disable replication on ${instance} / ${suffix}" > "$line/error"
+
+      if test ! -f "$line/error"; then
+        logger -t dirsrv-postdiscovery "disabled directory server replication on instance ${instance} / suffix ${suffix}."
+      else
+        logger -t dirsrv-postdiscovery "failed to disable directory server replication for instance ${instance} / suffix ${suffix}."
+      fi
+
+    else
+
+      if [ "${role}" = "consumer" ]; then
+
+        logger -t dirsrv-postdiscovery "setting directory server replication to 'consumer' on instance ${instance} / suffix ${suffix}..."
+
+        dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication enable --suffix "${suffix}" --role "${role}" --bind-group-dn "ou=${userroot},ou=Replication Managers,cn=config" > /dev/null || echo "Could not enable 'consumer' replication on ${instance} / ${suffix}" > "$line/error"
+
+        if test ! -f "$line/error"; then
+          logger -t dirsrv-postdiscovery "set directory server 'consumer' replication on instance ${instance} / suffix ${suffix}."
+        else
+          logger -t dirsrv-postdiscovery "failed to set directory server 'consumer' replication for instance ${instance} / suffix ${suffix}."
+          continue
+        fi
+
+      else
+
+        logger -t dirsrv-postdiscovery "enabling directory server replication to '${role}' with replica ID '${replica}' on instance ${instance} / suffix ${suffix}..."
+
+        dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication enable --suffix "${suffix}" --role "${role}" --bind-group-dn "ou=${userroot},ou=Replication Managers,cn=config" --replica-id "${replica}" > /dev/null || echo "Could not enable '${role}' replication for replica '${replica}' on ${instance} / ${suffix}" > "$line/error"
+
+        if test ! -f "$line/error"; then
+          logger -t dirsrv-postdiscovery "enabled directory server '${role}' replication with replica ID '${replica}' on instance ${instance} / suffix ${suffix}."
+        else
+          logger -t dirsrv-postdiscovery "failed to enable directory server '${role}' replication with replica ID '${replica}' for instance ${instance} / suffix ${suffix}."
+          continue
+        fi
+
+      fi
+
+    fi
+
+    if test -f "$line/added"; then
+      rm -f "$line/added"
+    else
+      rm -f "$line/updated"
+    fi
+
+  fi
+
+done
+
+
+#
+# Walk through each certificate allowed to replicate to us, enable or disable as needed.
+#
+find /etc/device/services/ldap-server/replication/certificates/ -mindepth 1 -maxdepth 1 -type l | \
+while read line; do
+
+  if [ ! -e "$line/name.txt" ]; then
+    continue;
+  elif [ ! -e "$line/tls-dns.txt" ]; then
+    continue;
+  elif [ ! -L "$line/suffix.d" ]; then
+    continue;
+  elif [ ! -e "$line/suffix.d/suffix.txt" ]; then
+    continue;
+  elif [ ! -e "$line/suffix.d/userroot.txt" ]; then
+    continue;
+  elif [ ! -L "$line/suffix.d/instance.d" ]; then
+    continue;
+  elif [ ! -e "$line/suffix.d/instance.d/instance.txt" ]; then
+    continue;
+  fi
+  instance="$(head -n 1 $line/suffix.d/instance.d/instance.txt)"
+
+  if [ "${instance}" != "${1}" ]; then
+    continue;
+  fi
+
+  suffix="$(head -n 1 $line/suffix.d/suffix.txt)"
+  userroot="$(head -n 1 $line/suffix.d/userroot.txt)"
+  cert="$(head -n 1 $line/name.txt)"
+  tls_dns="$(head -n 1 $line/tls-dns.txt)"
+
+  # remove old certificates
+  if test -f "$line/removed"; then
+
+    target=$(readlink -f "$line")
+
+    if test ! -f "$line/disabled.bin"; then
+
+      ldapmodify -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL <<- EOF || true
+dn: ou=${userroot},ou=Replication Managers,cn=config
+changetype: modify
+delete: uniqueMember
+uniqueMember: cn=${cert},ou=${userroot},ou=Replication Managers,cn=config
+
+EOF
+
+    fi
+
+    ldapdelete -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL "cn=${cert},ou=${userroot},ou=Replication Managers,cn=config" || true
+
+    # remove folder
+    rm -f "${target}"/*
+    rmdir "${target}"
+    rm -f "${line}"
+
+  # add new certificates
+  elif test -f "$line/added"; then
+
+    usercerts=
+
+    redwax-tool --pem-in="/etc/pki/tls/certs/*" \
+                --filter=search \
+                --filter-hostname "${tls_dns}" \
+		--no-chain-out --no-root-out --no-crl-out --no-key-out \
+                --der-out "${cert}-replicate.der" || echo "Could not find certificate for replication" > "$line/error"
+
+    while read usercert; do
+      usercerts+="userCertificate:< file://${usercert}"$'\n'
+      usercerts+="nsCertSubjectDN: $(openssl x509 -noout -subject -nameopt RFC2253 -in "${usercert}" | cut -c 9-)"$'\n'
+    done < <(find . -name "${cert}-replicate.der.*" -mindepth 1 -maxdepth 1 -type f | xargs realpath)
+
+    ldapadd -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL <<- EOF || true
+dn: cn=${cert},ou=${userroot},ou=Replication Managers,cn=config
+objectClass: top
+objectClass: organizationalRole
+objectClass: nsAccount
+cn: ${cert}
+description: Replication user added by ${0}
+${usercerts}
+EOF
+
+    if test ! -f "$line/disabled.bin"; then
+
+      ldapmodify -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL <<- EOF || true
+dn: ou=${userroot},ou=Replication Managers,cn=config
+changetype: modify
+add: uniqueMember
+uniqueMember: cn=${cert},ou=${userroot},ou=Replication Managers,cn=config
+
+EOF
+
+    fi
+
+    rm -f "$line/error"
+
+  # update new certificates
+  elif test -f "$line/updated"; then
+
+    rm -f "$line/error"
+
+
+  fi
+
+done
+

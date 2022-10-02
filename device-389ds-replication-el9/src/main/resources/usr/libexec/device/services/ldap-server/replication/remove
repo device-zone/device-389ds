@@ -5,7 +5,7 @@ umask 0002
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --mark name --hostname name "$@"
+  /usr/libexec/device-set --mark index --index index "$@"
 
   find /etc/device/services/ldap-server/instance/ -mindepth 1 -maxdepth 1 -type l | \
   while read line; do
@@ -20,12 +20,14 @@ if [ "$1" == "--" ]; then
     instance="$(head $line/instance.txt)"
 
     /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart "dirsrv-postdiscovery@${instance}.service"
-  
+
   done
+
+  /usr/libexec/device-set --reindex index --index index
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --mark name --hostname name "$@"
+  /usr/libexec/device-set --mark index --index index "$@"
 
 fi
 

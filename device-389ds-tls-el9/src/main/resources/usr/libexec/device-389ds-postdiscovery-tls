@@ -26,8 +26,38 @@ while read line; do
     tls_dns="${hostname}"
   fi
 
+  # remove old instances
+  if test -f "$line/removed"; then
+
+    target=$(readlink -f "$line")
+
+    if test ! -f "$line/disabled.bin"; then
+
+      logger -t dirsrv-postdiscovery "disabling directory server tls on instance ${instance}..."
+
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security disable || echo "Could not disable tls" > "$line/error"
+
+      if test ! -f "$line/error"; then
+        logger -t dirsrv-postdiscovery "disabled directory server tls on instance ${instance}."
+      else
+        logger -t dirsrv-postdiscovery "failed to disable directory server tls for instance ${instance}."
+      fi
+
+      if command -v /usr/bin/firewall-cmd 2>/dev/null; then
+        logger -t "$0" "Notice: disabling firewall for ldaps..."
+        /usr/bin/firewall-cmd --quiet --zone=public --remove-service=ldaps
+        logger -t "$0" "Notice: disabled firewall for ldaps."
+      fi
+
+    fi
+
+    # remove folder
+    rm -f "${target}"/*
+    rmdir "${target}"
+    rm -f "${line}"
+
   # add/update new tls?
-  if test -f "$line/added" -o -f "$line/updated"; then
+  elif test -f "$line/added" -o -f "$line/updated"; then
 
     rm -f "$line/error"
 
@@ -114,36 +144,6 @@ while read line; do
     else
       rm -f "$line/updated"
     fi
-
-  # remove old instances
-  elif test -f "$line/removed"; then
-
-    target=$(readlink -f "$line")
-
-    if test ! -f "$line/disabled.bin"; then
-
-      logger -t dirsrv-postdiscovery "disabling directory server tls on instance ${instance}..."
-
-      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security disable || echo "Could not disable tls" > "$line/error"
-
-      if test ! -f "$line/error"; then
-        logger -t dirsrv-postdiscovery "disabled directory server tls on instance ${instance}."
-      else
-        logger -t dirsrv-postdiscovery "failed to disable directory server tls for instance ${instance}."
-      fi
-
-      if command -v /usr/bin/firewall-cmd 2>/dev/null; then
-        logger -t "$0" "Notice: disabling firewall for ldaps..."
-        /usr/bin/firewall-cmd --quiet --zone=public --remove-service=ldaps
-        logger -t "$0" "Notice: disabled firewall for ldaps."
-      fi
-
-    fi
-
-    # remove folder
-    rm -f "${target}"/*
-    rmdir "${target}"
-    rm -f "${line}"
 
   # ordinary instance, make sure world can see it
   else

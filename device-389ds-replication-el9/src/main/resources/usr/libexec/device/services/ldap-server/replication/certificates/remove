@@ -20,7 +20,7 @@ if [ "$1" == "--" ]; then
     instance="$(head $line/instance.txt)"
 
     /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart "dirsrv-postdiscovery@${instance}.service"
-  
+
   done
 
 elif [ "$1" == "-c" ]; then
@@ -28,4 +28,5 @@ elif [ "$1" == "-c" ]; then
   /usr/libexec/device-set --mark name --hostname name "$@"
 
 fi
+
 

@@ -28,6 +28,7 @@
   <modules>
     <module>device-389ds-el9</module>
     <module>device-389ds-tls-el9</module>
+    <module>device-389ds-replication-el9</module>
   </modules>
 
   <build>
