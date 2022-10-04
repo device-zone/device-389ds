@@ -105,7 +105,7 @@ this. The certificate, chain and key will be found and configured automatically.
 [root@server ~]# device services ldap-server tls add instance=seawitch hostname=seawitch.example.com port=636
 ```
 
-## remove suffix from instance
+## remove tls from instance
 
 To remove the entry above with index zero, run this.
 
