@@ -3,6 +3,7 @@ Provides a 389ds directory server appliance
 
 This appliance does the following:
 
+- All parameters syntax checked and canonicalised.
 - Automatically creates instances as required.
 - Automatically creates suffixes beneath each instance as required.
 - Binds each instance securely to the unix domain socket /run/slapd-${instance}.socket.
@@ -55,6 +56,7 @@ Extends a 389ds directory server appliance with TLS support
 
 This appliance extension does the following:
 
+- All parameters syntax checked and canonicalised.
 - Automatically identifies the correct server certificate, certificate chain, root
   certificate and key to use, and configures the 389ds instance NSS certificate database
   to include these certificates and keys.
