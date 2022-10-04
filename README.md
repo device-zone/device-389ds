@@ -7,6 +7,7 @@ This appliance does the following:
 - Automatically creates suffixes beneath each instance as required.
 - Binds each instance securely to the unix domain socket /run/slapd-${instance}.socket.
 - Autostarts on server restart.
+- Zero Trust configuration.
 
 ## before
 
@@ -63,6 +64,7 @@ This appliance extension does the following:
 - Binds to port 636 using the given certificate.
 - If firewalld is installed, automatically opens the relevant port for the duration of
   the running of the server.
+- Zero Trust configuration.
 
 ## before
 
@@ -98,7 +100,7 @@ To expose the instance called "seawitch" with the hostname "seawitch.example.com
 this. The certificate, chain and key will be found and configured automatically.
 
 ```
-[root@server ~]# device services ldap-server tls add instance=seawitch hostname=seawitch.example.com
+[root@server ~]# device services ldap-server tls add instance=seawitch hostname=seawitch.example.com port=636
 ```
 
 ## remove suffix from instance
