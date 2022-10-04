@@ -9,7 +9,7 @@ while read line; do
   if [ ! -e "$line/instance.d/name.txt" ]; then
     continue;
   fi
-  instance="$(head $line/instance.d/name.txt)"
+  instance="$(head -n 1 $line/instance.d/name.txt)"
 
   if [ "${instance}" != "${1}" ]; then
     continue;
@@ -18,12 +18,18 @@ while read line; do
   if [ ! -e "$line/hostname.txt" ]; then
     continue;
   fi
-  hostname="$(head $line/hostname.txt)"
+  hostname="$(head -n 1 $line/hostname.txt)"
 
   if [ -e "$line/tls_dns.txt" ]; then
-    tls_dns="$(head $line/tls_dns.txt)"
+    tls_dns="$(head -n 1 $line/tls_dns.txt)"
   else
     tls_dns="${hostname}"
+  fi
+
+  if [ -e "$line/port.txt" ]; then
+    port="$(head -n 1 $line/port.txt)"
+  else
+    port=636
   fi
 
   # remove old instances
@@ -99,7 +105,7 @@ while read line; do
 
       dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security set \
         --security on \
-        --secure-port 636 \
+        --secure-port ${port} \
         --tls-protocol-min TLS1.2 \
         --allow-insecure-ciphers off \
         --allow-weak-dh-param off || echo "Could not set tls" > "$line/error"
@@ -134,9 +140,9 @@ while read line; do
       fi
 
       if command -v /usr/bin/firewall-cmd 2>/dev/null; then
-        logger -t "$0" "Notice: enabling firewall for ldaps..."
-        /usr/bin/firewall-cmd --quiet --zone=public --add-service=ldaps
-        logger -t "$0" "Notice: enabled firewall for ldaps."
+	      logger -t "$0" "Notice: enabling firewall for ldaps (port ${port})..."
+        /usr/bin/firewall-cmd --quiet --zone=public --add-port=${port}
+        logger -t "$0" "Notice: enabled firewall for ldaps (port ${port})."
       fi
 
     fi
