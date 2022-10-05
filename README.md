@@ -119,3 +119,101 @@ To remove the entry above with index zero, run this.
 ```
 
 
+
+# device-389ds-replication
+Extends a 389ds directory server appliance with replication support
+  
+This appliance extension does the following:
+
+- All parameters passed to the device commands are syntax checked and canonicalised,
+  with bash completion.
+- Offers configuration of autogoing replication agreements, secured by TLS and client
+  certificates.
+- Offers configuration of incoming replication requests, secured by TLS and client
+  certificates.
+- Automatically identifies the correct client certificate, certificate chain, root
+  certificate and key to use from certificates and keys placed under /etc/pki/tls,
+  updates the replication user to accept one or more of the certificates presented,
+  and configures the 389ds instance NSS certificate database to include all intermediate
+  and root certificates as required to fully verify the certificate in use.
+- Zero Trust configuration.
+
+## before
+
+- Deploy the device-389ds-replication package.
+
+```
+[root@server ~]# dnf install device-389ds-replication
+```
+
+- Place certificates in files beneath the directory /etc/pki/tls/certs with extension
+  pem. All certificates will be scanned, only file extensions are important.
+
+```
+[root@server ~]# ls -l /etc/pki/tls/certs
+/etc/pki/tls/certs:
+total 48
+drwxr-xr-x. 2 root root 4096 Oct  2 21:35 .
+drwxr-xr-x. 5 root root  104 Sep 23 21:03 ..
+lrwxrwxrwx. 1 root root   49 Jul 28 21:08 ca-bundle.crt -> /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+lrwxrwxrwx. 1 root root   55 Jul 28 21:08 ca-bundle.trust.crt -> /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
+-rw-r--r--. 1 root root 4893 Aug 20 12:50 upstream.example.com-sectigo-2023-hostCert.pem
+-rw-r--r--. 1 root root 4603 Aug 20 12:51 upstream.example.com-sectigo-2023-hostChain.pem
+-rw-r--r--. 1 root root 2278 Aug 20 12:50 seawitch.example.com-sectigo-2023-hostCert.pem
+-rw-r--r--. 1 root root 4136 Aug 20 12:51 seawitch.example.com-sectigo-2023-hostChain.pem
+```
+
+# add replication support to a given suffix
+
+To enable replication for a given suffix on a given instance we named "seawitch-example" above, 
+
+```
+[root@server ~]# device services ldap-server replication add replica-id=21 role=supplier suffix=seawitch-example 
+```
+
+# remove replication support from a given suffix
+
+To remove the entry above with index zero, run this.
+
+```
+[root@server ~]# device services ldap-server replication remove 0 
+```
+
+# add certificate to allow incoming replication
+
+To add an incoming user called "upstream" that allows replication protected by a
+given client certificate that matches "upstream.example.com", ensure the client
+certificate and if necessary full chain and root certificate are available in
+/etc/pki/tls/certs, and then run this. If the instance is running it will be
+updated immediately, if not running the instance will be updated at next startup.
+
+```
+[root@server ~]# device services ldap-server replication certificates add name=upstream tls-dns=upstream.example.com suffix=seawitch-example 
+```
+
+# remove the certificate added above
+
+To remove the certificate added above, run this. The user will be updated in the directory.
+
+```
+[root@server ~]# device services ldap-server replication certificates remove upstream 
+```
+
+# add replication agreement
+
+To add a replication agreement called "downstream" that we will replicate the suffix
+"seawitch-example" to the host "downstream.example.com" on port 636, run this.
+
+```
+[root@server ~]# device services ldap-server replication agreements add name=downstream host=downstream.example.com port=636 suffix=seawitch-example 
+```
+
+# remove replication agreement
+
+To remove the replication agreement added above, run this.
+
+```
+[root@server ~]# device services ldap-server replication agreements remove downstream
+```
+
+
