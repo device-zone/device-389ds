@@ -1,5 +1,5 @@
 # device-389ds
-Provides a 389ds directory server appliance
+Provides a 389ds directory server appliance.
 
 This appliance does the following:
 
@@ -58,10 +58,12 @@ Extends a 389ds directory server appliance with TLS support
 
 This appliance extension does the following:
 
-- All parameters syntax checked and canonicalised.
+- All parameters passed to the device commands are syntax checked and canonicalised,
+  with bash completion.
 - Automatically identifies the correct server certificate, certificate chain, root
-  certificate and key to use, and configures the 389ds instance NSS certificate database
-  to include these certificates and keys.
+  certificate and key to use from certificates and keys placed under /etc/pki/tls,
+  and configures the 389ds instance NSS certificate database to include these
+  certificates and keys.
 - Automatically configures certmap.conf to allow optional binding using client
   certificates, where the certificate is verified and stored in the userCertificate
   attribute, and the subject of the certificate is stored in nsCertSubjectDN.
@@ -72,7 +74,7 @@ This appliance extension does the following:
 
 ## before
 
-- Deploy the device-389ds package.
+- Deploy the device-389ds-tls package.
 
 ```
 [root@server ~]# dnf install device-389ds-tls
@@ -80,7 +82,7 @@ This appliance extension does the following:
 
 - Place certificates in files beneath the directory /etc/pki/tls/certs with extension
   pem. Place keys in files beneath the directory /etc/pki/tls/private. All certificates
-  and keys will be scanned, filenames are not important.
+  and keys will be scanned, only file extensions are important.
 
 ```
 [root@server ~]# ls -l /etc/pki/tls/certs /etc/pki/tls/private
@@ -100,8 +102,9 @@ total 12
 
 ## add tls to instance
 
-To expose the instance called "seawitch" with the hostname "seawitch.example.com", run
-this. The certificate, chain and key will be found and configured automatically.
+To expose the instance called "seawitch" with the hostname "seawitch.example.com" over
+port 636 securely using LDAPS, run this. The certificate, chain and key will be found
+based on the hostname provided and configured automatically.
 
 ```
 [root@server ~]# device services ldap-server tls add instance=seawitch hostname=seawitch.example.com port=636
