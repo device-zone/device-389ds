@@ -3,10 +3,12 @@ Provides a 389ds directory server appliance
 
 This appliance does the following:
 
-- All parameters syntax checked and canonicalised.
-- Automatically creates instances as required.
+- All parameters passed to the device commands are syntax checked and canonicalised, with bash completion.
+- Automatically creates directory server instances as required.
 - Automatically creates suffixes beneath each instance as required.
 - Binds each instance securely to the unix domain socket /run/slapd-${instance}.socket.
+- Allows the system's root user to adopt the identity of the Directory Manager.
+- No access to directory via the network until device-389ds-tls is installed and configured as below.
 - Autostarts on server restart.
 - Zero Trust configuration.
 
