@@ -8,7 +8,7 @@
 
   <artifactId>device-389ds</artifactId>
   <groupId>zone.device.platform</groupId>
-  <version>0.9.0-SNAPSHOT</version>
+  <version>0.9.0</version>
   <packaging>pom</packaging>
   <name>device 389ds package</name>
   <description>Packaging for the 389ds appliance</description>
@@ -20,9 +20,9 @@
   </organization>
 
   <scm>
-    <connection>scm:svn:https://github.com/device-zone/device-389ds/trunk</connection>
-    <developerConnection>scm:svn:https://github.com/device-zone/device-389ds/trunk</developerConnection>
-    <url>https://github.com/device-zone/device-389ds/trunk</url>
+    <connection>scm:svn:https://github.com/device-zone/device-389ds/tags/device-389ds-0.9.0</connection>
+    <developerConnection>scm:svn:https://github.com/device-zone/device-389ds/tags/device-389ds-0.9.0</developerConnection>
+    <url>https://github.com/device-zone/device-389ds/tags/device-389ds-0.9.0</url>
   </scm>
 
   <modules>
