@@ -8,11 +8,11 @@
 
   <artifactId>device-389ds</artifactId>
   <groupId>zone.device.platform</groupId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>0.9.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>device 389ds package</name>
   <description>Packaging for the 389ds appliance</description>
-  <inceptionYear>2016</inceptionYear>
+  <inceptionYear>2022</inceptionYear>
 
   <organization>
     <name>Device Project</name>
