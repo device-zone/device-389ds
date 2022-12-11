@@ -216,4 +216,3 @@ To remove the replication agreement added above, run this.
 [root@server ~]# device services ldap replication agreement remove downstream
 ```
 
-
