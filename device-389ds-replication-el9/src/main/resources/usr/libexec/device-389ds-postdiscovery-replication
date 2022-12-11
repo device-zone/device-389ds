@@ -52,7 +52,7 @@ logger -t dirsrv-postdiscovery "added replication manager on instance ${instance
 #
 # Walk through each entry under replication, enable or disable as needed.
 #
-find /etc/device/services/ldap/replication/ -mindepth 1 -maxdepth 1 -type l | \
+find /etc/device/services/ldap/replication/replica -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
 
   if [ ! -e "$line/replica-id.txt" ]; then

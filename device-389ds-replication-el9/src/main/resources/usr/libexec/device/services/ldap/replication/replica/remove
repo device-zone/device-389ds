@@ -5,7 +5,7 @@ umask 0002
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --mark index --index index "$@"
+  /usr/libexec/device-set --mark suffix --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix "$@"
 
   find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
   while read line; do
@@ -23,11 +23,9 @@ if [ "$1" == "--" ]; then
 
   done
 
-  /usr/libexec/device-set --reindex index --index index
-
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --mark index --index index "$@"
+  /usr/libexec/device-set --mark suffix --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix "$@"
 
 fi
 
