@@ -7,7 +7,7 @@ if [ "$1" == "--" ]; then
 
   /usr/libexec/device-set --mark name --hostname name "$@"
 
-  find /etc/device/services/ldap-server/instance/ -mindepth 1 -maxdepth 1 -type l | \
+  find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
   while read line; do
 
     if test -f "$line/disabled.bin"; then

@@ -25,7 +25,7 @@ This appliance does the following:
 To add an instance called "seawitch", run this.
 
 ```
-[root@server ~]# device services ldap-server instance add name=seawitch
+[root@server ~]# device services ldap instance add name=seawitch
 ```
 
 ## remove instance
@@ -33,7 +33,7 @@ To add an instance called "seawitch", run this.
 To remove an instance called "seawitch", run this.
 
 ```
-[root@server ~]# device services ldap-server instance remove seawitch 
+[root@server ~]# device services ldap instance remove seawitch 
 ```
 
 ## add suffix to instance
@@ -41,7 +41,7 @@ To remove an instance called "seawitch", run this.
 To add a suffix called "dc=example,dc=com" with a userroot of "example" to an instance called "seawitch", run this. The name "seawitch-example" is used so we can refer to this suffix elsewhere.
 
 ```
-[root@server ~]# device services ldap-server suffix add name=seawitch-example instance=seawitch userroot=example suffix="dc=example,dc=com"
+[root@server ~]# device services ldap suffix add name=seawitch-example instance=seawitch userroot=example suffix="dc=example,dc=com"
 ```
 
 ## remove suffix from instance
@@ -49,7 +49,7 @@ To add a suffix called "dc=example,dc=com" with a userroot of "example" to an in
 To remove a suffix we named "seawitch-example" above from an instance called "seawitch", run this.
 
 ```
-[root@server ~]# device services ldap-server suffix remove seawitch-example
+[root@server ~]# device services ldap suffix remove seawitch-example
 ```
 
 
@@ -107,7 +107,7 @@ port 636 securely using LDAPS, run this. The certificate, chain and key will be 
 based on the hostname provided and configured automatically.
 
 ```
-[root@server ~]# device services ldap-server tls add instance=seawitch hostname=seawitch.example.com port=636
+[root@server ~]# device services ldap tls add instance=seawitch hostname=seawitch.example.com port=636
 ```
 
 ## remove tls from instance
@@ -115,7 +115,7 @@ based on the hostname provided and configured automatically.
 To remove the entry above with index zero, run this.
 
 ```
-[root@server ~]# device services ldap-server tls remove 0
+[root@server ~]# device services ldap tls remove 0
 ```
 
 
@@ -168,7 +168,7 @@ lrwxrwxrwx. 1 root root   55 Jul 28 21:08 ca-bundle.trust.crt -> /etc/pki/ca-tru
 To enable replication for a given suffix on a given instance we named "seawitch-example" above, 
 
 ```
-[root@server ~]# device services ldap-server replication add replica-id=21 role=supplier suffix=seawitch-example 
+[root@server ~]# device services ldap replication add replica-id=21 role=supplier suffix=seawitch-example 
 ```
 
 # remove replication support from a given suffix
@@ -176,7 +176,7 @@ To enable replication for a given suffix on a given instance we named "seawitch-
 To remove the entry above with index zero, run this.
 
 ```
-[root@server ~]# device services ldap-server replication remove 0 
+[root@server ~]# device services ldap replication remove 0 
 ```
 
 # add certificate to allow incoming replication
@@ -188,7 +188,7 @@ certificate and if necessary full chain and root certificate are available in
 updated immediately, if not running the instance will be updated at next startup.
 
 ```
-[root@server ~]# device services ldap-server replication certificates add name=upstream tls-dns=upstream.example.com suffix=seawitch-example 
+[root@server ~]# device services ldap replication certificates add name=upstream tls-dns=upstream.example.com suffix=seawitch-example 
 ```
 
 # remove the certificate added above
@@ -196,7 +196,7 @@ updated immediately, if not running the instance will be updated at next startup
 To remove the certificate added above, run this. The user will be updated in the directory.
 
 ```
-[root@server ~]# device services ldap-server replication certificates remove upstream 
+[root@server ~]# device services ldap replication certificates remove upstream 
 ```
 
 # add replication agreement
@@ -205,7 +205,7 @@ To add a replication agreement called "downstream" that we will replicate the su
 "seawitch-example" to the host "downstream.example.com" on port 636, run this.
 
 ```
-[root@server ~]# device services ldap-server replication agreements add name=downstream host=downstream.example.com port=636 suffix=seawitch-example 
+[root@server ~]# device services ldap replication agreements add name=downstream host=downstream.example.com port=636 suffix=seawitch-example 
 ```
 
 # remove replication agreement
@@ -213,7 +213,7 @@ To add a replication agreement called "downstream" that we will replicate the su
 To remove the replication agreement added above, run this.
 
 ```
-[root@server ~]# device services ldap-server replication agreements remove downstream
+[root@server ~]# device services ldap replication agreements remove downstream
 ```
 
 

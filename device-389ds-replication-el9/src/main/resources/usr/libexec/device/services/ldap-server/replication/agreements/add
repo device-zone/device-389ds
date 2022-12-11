@@ -8,9 +8,9 @@ trap 'rm -rf -- "${tmpdir}"' EXIT
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --add name --hostname name --polar disabled --port port --required --fqdn host --relation-base /etc/device/services/ldap-server/suffix --relation-name name --relation-suffix .txt --relation suffix "$@"
+  /usr/libexec/device-set --add name --hostname name --polar disabled --port port --required --fqdn host --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix "$@"
 
-  find /etc/device/services/ldap-server/instance/ -mindepth 1 -maxdepth 1 -type l | \
+  find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
   while read line; do
 
     if test -f "$line/disabled.bin"; then
@@ -28,7 +28,7 @@ if [ "$1" == "--" ]; then
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --add name --hostname name --polar disabled --port port --required --fqdn host --relation-base /etc/device/services/ldap-server/suffix --relation-name name --relation-suffix .txt --relation suffix "$@" | cat
+  /usr/libexec/device-set --add name --hostname name --polar disabled --port port --required --fqdn host --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix "$@" | cat
 
 fi
 

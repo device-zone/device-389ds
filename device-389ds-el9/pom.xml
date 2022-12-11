@@ -152,66 +152,66 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/etc/device/services/ldap-server/instance</directory>
+              <directory>/etc/device/services/ldap/instance</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>2775</filemode>
               <username>root</username>
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap-server/instance</directory>
+              <directory>/usr/libexec/device/services/ldap/instance</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap-server/instance</directory>
+              <directory>/usr/libexec/device/services/ldap/instance</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap-server/instance/add</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/instance/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap-server/instance/remove</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/instance/remove</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap-server/instance/set</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/instance/set</location>
                 </source>
               </sources>
             </mapping>
             <mapping>
-              <directory>/etc/device/services/ldap-server/suffix</directory>
+              <directory>/etc/device/services/ldap/suffix</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>2775</filemode>
               <username>root</username>
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap-server/suffix</directory>
+              <directory>/usr/libexec/device/services/ldap/suffix</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap-server/suffix</directory>
+              <directory>/usr/libexec/device/services/ldap/suffix</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap-server/suffix/add</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/suffix/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap-server/suffix/remove</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/suffix/remove</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap-server/suffix/set</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/suffix/set</location>
                 </source>
               </sources>
             </mapping>
