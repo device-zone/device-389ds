@@ -90,6 +90,8 @@ while read line; do
 
       logger -t dirsrv-postdiscovery "disabling directory server replication on instance ${instance} / suffix ${suffix}..."
 
+      logger -t dirsrv-postdiscovery "dsconf \"ldapi://%2frun%2fslapd-${instance}.socket\" replication disable --suffix \"${suffix}\""
+
       dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication disable --suffix "${suffix}" > /dev/null || echo "Could not disable replication on ${instance} / ${suffix}" > "$line/error"
 
       if test ! -f "$line/error"; then
@@ -134,6 +136,8 @@ EOF
 
       logger -t dirsrv-postdiscovery "disabling directory server replication on instance ${instance} / suffix ${suffix}..."
 
+      logger -t dirsrv-postdiscovery "dsconf \"ldapi://%2frun%2fslapd-${instance}.socket\" replication disable --suffix \"${suffix}\""
+
       dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication disable --suffix "${suffix}" > /dev/null || echo "Could not disable replication on ${instance} / ${suffix}" > "$line/error"
 
       if test ! -f "$line/error"; then
@@ -144,29 +148,33 @@ EOF
 
     else
 
-      if [ "${role}" = "consumer" ]; then
+      if [ "${role}" = "supplier" ]; then
 
-        logger -t dirsrv-postdiscovery "setting directory server replication to 'consumer' on instance ${instance} / suffix ${suffix}..."
+        logger -t dirsrv-postdiscovery "setting directory server replication to 'supplier' with replica ID '${replica}' on instance ${instance} / suffix ${suffix}..."
 
-        dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication enable --suffix "${suffix}" --role "${role}" --bind-group-dn "ou=${userroot},ou=Replication Managers,cn=config" > /dev/null || echo "Could not enable 'consumer' replication on ${instance} / ${suffix}" > "$line/error"
+	logger -t dirsrv-postdiscovery "dsconf \"ldapi://%2frun%2fslapd-${instance}.socket\" replication enable --suffix \"${suffix}\" --role \"${role}\" --bind-group-dn \"ou=${userroot},ou=Replication Managers,cn=config\" --replica-id \"${replica}\""
+
+        dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication enable --suffix "${suffix}" --role "${role}" --bind-group-dn "ou=${userroot},ou=Replication Managers,cn=config" --replica-id "${replica}" > /dev/null || echo "Could not enable 'supplier' replication on ${instance} / ${suffix}" > "$line/error"
 
         if test ! -f "$line/error"; then
-          logger -t dirsrv-postdiscovery "set directory server 'consumer' replication on instance ${instance} / suffix ${suffix}."
+          logger -t dirsrv-postdiscovery "set directory server 'supplier' replication with replica ID '${replica}' on instance ${instance} / suffix ${suffix}."
         else
-          logger -t dirsrv-postdiscovery "failed to set directory server 'consumer' replication for instance ${instance} / suffix ${suffix}."
+          logger -t dirsrv-postdiscovery "failed to set directory server 'supplier' replication with replica ID '${replica}' for instance ${instance} / suffix ${suffix}."
           continue
         fi
 
       else
 
-        logger -t dirsrv-postdiscovery "enabling directory server replication to '${role}' with replica ID '${replica}' on instance ${instance} / suffix ${suffix}..."
+        logger -t dirsrv-postdiscovery "enabling directory server replication to '${role}' on instance ${instance} / suffix ${suffix}..."
 
-        dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication enable --suffix "${suffix}" --role "${role}" --bind-group-dn "ou=${userroot},ou=Replication Managers,cn=config" --replica-id "${replica}" > /dev/null || echo "Could not enable '${role}' replication for replica '${replica}' on ${instance} / ${suffix}" > "$line/error"
+	logger -t dirsrv-postdiscovery "dsconf \"ldapi://%2frun%2fslapd-${instance}.socket\" replication enable --suffix \"${suffix}\" --role \"${role}\" --bind-group-dn \"ou=${userroot},ou=Replication Managers,cn=config\""
+
+        dsconf "ldapi://%2frun%2fslapd-${instance}.socket" replication enable --suffix "${suffix}" --role "${role}" --bind-group-dn "ou=${userroot},ou=Replication Managers,cn=config" > /dev/null || echo "Could not enable '${role}' replication for replica '${replica}' on ${instance} / ${suffix}" > "$line/error"
 
         if test ! -f "$line/error"; then
-          logger -t dirsrv-postdiscovery "enabled directory server '${role}' replication with replica ID '${replica}' on instance ${instance} / suffix ${suffix}."
+          logger -t dirsrv-postdiscovery "enabled directory server '${role}' replication on instance ${instance} / suffix ${suffix}."
         else
-          logger -t dirsrv-postdiscovery "failed to enable directory server '${role}' replication with replica ID '${replica}' for instance ${instance} / suffix ${suffix}."
+          logger -t dirsrv-postdiscovery "failed to enable directory server '${role}' replication for instance ${instance} / suffix ${suffix}."
           continue
         fi
 
