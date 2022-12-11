@@ -168,7 +168,7 @@ lrwxrwxrwx. 1 root root   55 Jul 28 21:08 ca-bundle.trust.crt -> /etc/pki/ca-tru
 To enable replication for a given suffix on a given instance we named "seawitch-example" above, 
 
 ```
-[root@server ~]# device services ldap replication add replica-id=21 role=supplier suffix=seawitch-example 
+[root@server ~]# device services ldap replication replica add replica-id=21 role=supplier suffix=seawitch-example 
 ```
 
 # remove replication support from a given suffix
@@ -176,7 +176,7 @@ To enable replication for a given suffix on a given instance we named "seawitch-
 To remove the entry above with index zero, run this.
 
 ```
-[root@server ~]# device services ldap replication remove 0 
+[root@server ~]# device services ldap replication replica remove 0 
 ```
 
 # add certificate to allow incoming replication
@@ -205,7 +205,7 @@ To add a replication agreement called "downstream" that we will replicate the su
 "seawitch-example" to the host "downstream.example.com" on port 636, run this.
 
 ```
-[root@server ~]# device services ldap replication agreements add name=downstream host=downstream.example.com port=636 suffix=seawitch-example 
+[root@server ~]# device services ldap replication agreement add name=downstream host=downstream.example.com port=636 suffix=seawitch-example 
 ```
 
 # remove replication agreement
@@ -213,7 +213,7 @@ To add a replication agreement called "downstream" that we will replicate the su
 To remove the replication agreement added above, run this.
 
 ```
-[root@server ~]# device services ldap replication agreements remove downstream
+[root@server ~]# device services ldap replication agreement remove downstream
 ```
 
 

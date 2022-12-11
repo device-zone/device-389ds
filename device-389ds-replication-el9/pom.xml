@@ -180,34 +180,34 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/etc/device/services/ldap/replication/agreements</directory>
+              <directory>/etc/device/services/ldap/replication/agreement</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>2775</filemode>
               <username>root</username>
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/agreements</directory>
+              <directory>/usr/libexec/device/services/ldap/replication/agreement</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/agreements</directory>
+              <directory>/usr/libexec/device/services/ldap/replication/agreement</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreements/add</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreements/remove</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/remove</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreements/set</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/set</location>
                 </source>
               </sources>
             </mapping>
