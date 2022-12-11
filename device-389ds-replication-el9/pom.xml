@@ -151,31 +151,31 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/etc/device/services/ldap/replication/certificates</directory>
+              <directory>/etc/device/services/ldap/replication/certificate</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>2775</filemode>
               <username>root</username>
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/certificates</directory>
+              <directory>/usr/libexec/device/services/ldap/replication/certificate</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/certificates</directory>
+              <directory>/usr/libexec/device/services/ldap/replication/certificate</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/certificates/add</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/replication/certificate/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/certificates/remove</location>
+                  <location>target/classes/usr/libexec/device/services/ldap/replication/certificate/remove</location>
                 </source>
               </sources>
             </mapping>

@@ -188,7 +188,7 @@ done
 #
 # Walk through each certificate allowed to replicate to us, enable or disable as needed.
 #
-find /etc/device/services/ldap/replication/certificates/ -mindepth 1 -maxdepth 1 -type l | \
+find /etc/device/services/ldap/replication/certificate/ -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
 
   if [ ! -e "$line/name.txt" ]; then

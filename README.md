@@ -188,7 +188,7 @@ certificate and if necessary full chain and root certificate are available in
 updated immediately, if not running the instance will be updated at next startup.
 
 ```
-[root@server ~]# device services ldap replication certificates add name=upstream tls-dns=upstream.example.com suffix=seawitch-example 
+[root@server ~]# device services ldap replication certificate add name=upstream tls-dns=upstream.example.com suffix=seawitch-example 
 ```
 
 # remove the certificate added above
@@ -196,7 +196,7 @@ updated immediately, if not running the instance will be updated at next startup
 To remove the certificate added above, run this. The user will be updated in the directory.
 
 ```
-[root@server ~]# device services ldap replication certificates remove upstream 
+[root@server ~]# device services ldap replication certificate remove upstream 
 ```
 
 # add replication agreement
