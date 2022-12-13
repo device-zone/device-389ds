@@ -92,7 +92,7 @@ while read line; do
                   --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
                   --auto-out \
                   --trust-out \
-                  --nss-out=/etc/dirsrv/slapd-seawitch/ || echo "Could not import cert/key for tls" > "$line/error"
+                  --nss-out=/etc/dirsrv/slapd-${instance}/ || echo "Could not import cert/key for tls" > "$line/error"
 
       if test ! -f "$line/error"; then
         logger -t dirsrv-postdiscovery "imported directory server certificate/key on instance ${instance}."

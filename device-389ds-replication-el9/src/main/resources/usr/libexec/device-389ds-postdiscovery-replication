@@ -262,7 +262,7 @@ EOF
                 --no-cert-out --chain-out --trust-out \
                 --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
                 --auto-out \
-                --nss-out=/etc/dirsrv/slapd-seawitch/ || echo "Could not find and verify certificate for replication" > "$line/error"
+                --nss-out=/etc/dirsrv/slapd-${instance}/ || echo "Could not find and verify certificate for replication" > "$line/error"
 
     while read usercert; do
       usercerts+="userCertificate:< file://${usercert}"$'\n'
