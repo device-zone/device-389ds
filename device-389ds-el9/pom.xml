@@ -83,7 +83,7 @@
           </defineStatements>
           <mappings>
             <mapping>
-              <directory>/usr/libexec/</directory>
+              <directory>/usr/libexec/device-autodiscovery</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -91,30 +91,39 @@
               <sources>
                 <source>
                   <location>target/classes/usr/libexec/device-389ds-autodiscovery</location>
-                  <destination>device-389ds-autodiscovery</destination>
-                </source>
-                <source>
-                  <location>target/classes/usr/libexec/device-389ds-postdiscovery</location>
-                  <destination>device-389ds-postdiscovery</destination>
+                  <destination>389ds</destination>
                 </source>
               </sources>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-389ds-autodiscovery.d</directory>
+              <directory>/usr/libexec/device-autodiscovery/389ds.d</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-389ds-postdiscovery.d</directory>
+              <directory>/usr/libexec/device-postdiscovery</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/usr/libexec/device-389ds-postdiscovery</location>
+                  <destination>389ds</destination>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
+              <directory>/usr/libexec/device-postdiscovery/389ds.d</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-389ds-postdiscovery.d</directory>
+              <directory>/usr/libexec/device-postdiscovery/389ds.d</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>

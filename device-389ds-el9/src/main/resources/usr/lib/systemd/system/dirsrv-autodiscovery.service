@@ -10,8 +10,8 @@ After=firewalld.service
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash /usr/libexec/device-389ds-autodiscovery
-ExecReload=/bin/bash /usr/libexec/device-389ds-autodiscovery
+ExecStart=/bin/bash /usr/libexec/device-autodiscovery/389ds
+ExecReload=/bin/bash /usr/libexec/device-autodiscovery/389ds
 RemainAfterExit=on
 
 [Install]

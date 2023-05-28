@@ -1,4 +1,6 @@
 #!/bin/sh
+
+# fixme: check certificates on add
   
 set -e
 umask 0002
