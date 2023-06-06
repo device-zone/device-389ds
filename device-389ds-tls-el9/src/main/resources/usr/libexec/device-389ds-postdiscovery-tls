@@ -50,9 +50,9 @@ while read line; do
       fi
 
       if command -v /usr/bin/firewall-cmd 2>/dev/null; then
-        logger -t "$0" "Notice: disabling firewall for ldaps..."
-        /usr/bin/firewall-cmd --quiet --zone=public --remove-service=ldaps
-        logger -t "$0" "Notice: disabled firewall for ldaps."
+        logger -t "$0" "Notice: disabling firewall for ldaps (port ${port})..."
+        /usr/bin/firewall-cmd --quiet --zone=public --remove-port=${port}/tcp
+        logger -t "$0" "Notice: disabled firewall for ldaps (port ${port})."
       fi
 
     fi
@@ -141,7 +141,7 @@ while read line; do
 
       if command -v /usr/bin/firewall-cmd 2>/dev/null; then
 	      logger -t "$0" "Notice: enabling firewall for ldaps (port ${port})..."
-        /usr/bin/firewall-cmd --quiet --zone=public --add-port=${port}
+        /usr/bin/firewall-cmd --quiet --zone=public --add-port=${port}/tcp
         logger -t "$0" "Notice: enabled firewall for ldaps (port ${port})."
       fi
 
@@ -158,15 +158,15 @@ while read line; do
 
     if test ! -f "$line/disabled.bin"; then
       if command -v /usr/bin/firewall-cmd 2>/dev/null; then
-        logger -t "$0" "Notice: enabling firewall for ldaps..."
-        /usr/bin/firewall-cmd --quiet --zone=public --add-service=ldaps
-        logger -t "$0" "Notice: enabled firewall for ldaps."
+        logger -t "$0" "Notice: enabling firewall for ldaps (port ${port})..."
+        /usr/bin/firewall-cmd --quiet --zone=public --add-port=${port}/tcp
+        logger -t "$0" "Notice: enabled firewall for ldaps (port ${port})."
       fi
     else
       if command -v /usr/bin/firewall-cmd 2>/dev/null; then
-        logger -t "$0" "Notice: disabling firewall for ldaps..."
-        /usr/bin/firewall-cmd --quiet --zone=public --remove-service=ldaps
-        logger -t "$0" "Notice: disabled firewall for ldaps."
+        logger -t "$0" "Notice: disabling firewall for ldaps (port ${port})..."
+        /usr/bin/firewall-cmd --quiet --zone=public --remove-port=${port}/tcp
+        logger -t "$0" "Notice: disabled firewall for ldaps (port ${port})."
       fi
     fi
   fi
