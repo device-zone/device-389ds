@@ -1,3 +1,10 @@
+# device-389ds-server
+Provides a convenient way to install all the packages below in one go.
+
+```
+[root@server ~]# dnf install device-389ds-server
+```
+
 # device-389ds
 Provides a 389ds directory server appliance.
 
