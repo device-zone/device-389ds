@@ -3,9 +3,11 @@
 set -e
 umask 0002
 
+OPTIONS="--mark name --hostname name"
+
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --mark name --hostname name "$@"
+  /usr/libexec/device-set ${OPTIONS} "$@"
 
   find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
   while read line; do
@@ -25,7 +27,7 @@ if [ "$1" == "--" ]; then
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --mark name --hostname name "$@"
+  /usr/libexec/device-set ${OPTIONS} "$@"
 
 fi
 

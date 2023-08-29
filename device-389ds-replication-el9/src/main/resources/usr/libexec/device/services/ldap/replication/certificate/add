@@ -8,9 +8,11 @@ umask 0002
 tmpdir="$(mktemp -d)"
 trap 'rm -rf -- "${tmpdir}"' EXIT
 
+OPTIONS="--add name --hostname name --required --fqdn tls-dns --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix"
+
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --add name --hostname name --required --fqdn tls-dns --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix "$@"
+  /usr/libexec/device-set ${OPTIONS} "$@"
 
   find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
   while read line; do
@@ -30,7 +32,7 @@ if [ "$1" == "--" ]; then
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --add name --hostname name --required --fqdn tls-dns --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix "$@" | cat
+  /usr/libexec/device-set ${OPTIONS} "$@" | cat
 
 fi
 

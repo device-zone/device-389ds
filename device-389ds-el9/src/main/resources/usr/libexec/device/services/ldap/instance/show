@@ -3,13 +3,11 @@
 set -e
 umask 0002
 
-OPTIONS="--set name --hostname name --polar disabled"
+OPTIONS="--show name --hostname name --polar disabled"
 
 if [ "$1" == "--" ]; then
 
   /usr/libexec/device-set ${OPTIONS} "$@"
-
-  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-autodiscovery.service
 
 elif [ "$1" == "-c" ]; then
 

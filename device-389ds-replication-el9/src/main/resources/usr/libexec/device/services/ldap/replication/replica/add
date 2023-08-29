@@ -6,9 +6,11 @@ umask 0002
 tmpdir="$(mktemp -d)"
 trap 'rm -rf -- "${tmpdir}"' EXIT
 
+OPTIONS="--add suffix --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix --required --integer-minimum 1 --integer-maximum 65534 --integer replica-id --select-base /usr/libexec/device/services/ldap/replication/roles.txt --select role"
+
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --add suffix --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix --required --integer-minimum 1 --integer-maximum 65534 --integer replica-id --select-base "/usr/libexec/device/services/ldap/replication/roles.txt" --select role "$@"
+  /usr/libexec/device-set ${OPTIONS} "$@"
 
   find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
   while read line; do
@@ -28,7 +30,7 @@ if [ "$1" == "--" ]; then
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --add suffix --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix --required --integer-minimum 1 --integer-maximum 65534 --integer replica-id --select-base "/usr/libexec/device/services/ldap/replication/roles.txt" --select role "$@" | cat
+  /usr/libexec/device-set ${OPTIONS} "$@" | cat
 
 fi
 

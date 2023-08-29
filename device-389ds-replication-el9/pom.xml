@@ -136,6 +136,9 @@
                 <source>
                   <location>target/classes/usr/libexec/device/services/ldap/replication/replica/remove</location>
                 </source>
+                <source>
+                  <location>target/classes/usr/libexec/device/services/ldap/replication/replica/show</location>
+                </source>
               </sources>
             </mapping>
             <mapping>
@@ -177,6 +180,9 @@
                 <source>
                   <location>target/classes/usr/libexec/device/services/ldap/replication/certificate/remove</location>
                 </source>
+                <source>
+                  <location>target/classes/usr/libexec/device/services/ldap/replication/certificate/show</location>
+                </source>
               </sources>
             </mapping>
             <mapping>
@@ -208,6 +214,9 @@
                 </source>
                 <source>
                   <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/set</location>
+                </source>
+                <source>
+                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/show</location>
                 </source>
               </sources>
             </mapping>

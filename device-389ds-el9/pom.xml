@@ -190,6 +190,9 @@
                 <source>
                   <location>target/classes/usr/libexec/device/services/ldap/instance/set</location>
                 </source>
+                <source>
+                  <location>target/classes/usr/libexec/device/services/ldap/instance/show</location>
+                </source>
               </sources>
             </mapping>
             <mapping>
@@ -221,6 +224,9 @@
                 </source>
                 <source>
                   <location>target/classes/usr/libexec/device/services/ldap/suffix/set</location>
+                </source>
+                <source>
+                  <location>target/classes/usr/libexec/device/services/ldap/suffix/show</location>
                 </source>
               </sources>
             </mapping>

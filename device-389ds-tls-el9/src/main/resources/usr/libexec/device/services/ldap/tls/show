@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+OPTIONS="--show index --index index --port port --fqdn tls-dns --required --fqdn hostname --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance"
+
+if [ "$1" == "--" ]; then
+
+  /usr/libexec/device-set ${OPTIONS} "$@"
+
+elif [ "$1" == "-c" ]; then
+
+  /usr/libexec/device-set ${OPTIONS} "$@" | cat
+
+fi
+
