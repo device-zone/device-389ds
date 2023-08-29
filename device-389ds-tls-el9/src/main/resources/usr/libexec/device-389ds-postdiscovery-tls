@@ -86,8 +86,9 @@ while read line; do
       redwax-tool --pem-in="/etc/pki/tls/private/*" \
                   --pem-in="/etc/pki/tls/certs/ca-bundle.trust.crt" \
                   --pem-in="/etc/pki/tls/certs/*.pem" \
-                  --filter=search \
+                  --filter=verify \
                   --filter-hostname "${tls_dns}" \
+                  --filter-expiry=ignore-leaf \
                   --label-out Server-Cert \
                   --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
                   --auto-out \

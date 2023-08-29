@@ -255,8 +255,9 @@ EOF
     usercerts=
 
     redwax-tool --pem-in="/etc/pki/tls/certs/*" \
-                --filter=search \
+                --filter=verify \
                 --filter-hostname "${tls_dns}" \
+                --filter-expiry=ignore-leaf \
                 --no-chain-out --no-root-out --no-crl-out --no-key-out \
                 --der-out "${cert}-replicate.der" \
                 --no-cert-out --chain-out --trust-out \
