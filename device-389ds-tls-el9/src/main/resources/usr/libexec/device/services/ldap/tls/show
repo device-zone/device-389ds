@@ -3,7 +3,7 @@
 set -e
 umask 0002
 
-OPTIONS="--show index --index index --port port --fqdn tls-dns --required --fqdn hostname --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance"
+OPTIONS="--show index --show-index index --show-table instance,hostname,port,tls-dns --index index --port port --fqdn tls-dns --required --fqdn hostname --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance"
 
 if [ "$1" == "--" ]; then
 
