@@ -154,7 +154,6 @@
           </preremoveScriptlet>
           <requires>
             <require>device-389ds</require>
-            <require>retry</require>
             <require>redwax-tool</require>
           </requires>
         </configuration>

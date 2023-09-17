@@ -241,6 +241,7 @@
           </preremoveScriptlet>
           <requires>
             <require>389-ds-base</require>
+            <require>retry</require>
             <require>expect</require>
             <require>device</require>
           </requires>
