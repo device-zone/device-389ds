@@ -81,27 +81,6 @@ while read line; do
 
     else
 
-      logger -t dirsrv-postdiscovery "importing directory server certificate/key on instance ${instance}..."
-
-      redwax-tool --pem-in="/etc/pki/tls/private/*" \
-                  --pem-in="/etc/pki/tls/certs/ca-bundle.trust.crt" \
-                  --pem-in="/etc/pki/tls/certs/*.pem" \
-                  --filter=verify \
-                  --filter-hostname "${tls_dns}" \
-                  --filter-expiry=ignore-leaf \
-                  --label-out Server-Cert \
-                  --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
-                  --auto-out \
-                  --trust-out \
-                  --nss-out=/etc/dirsrv/slapd-${instance}/ || echo "Could not import cert/key for tls" > "$line/error"
-
-      if test ! -f "$line/error"; then
-        logger -t dirsrv-postdiscovery "imported directory server certificate/key on instance ${instance}."
-      else
-        logger -t dirsrv-postdiscovery "failed to import directory server certificate/key for instance ${instance}."
-        continue
-      fi
-
       logger -t dirsrv-postdiscovery "setting directory server tls on instance ${instance}..."
 
       dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security set \
