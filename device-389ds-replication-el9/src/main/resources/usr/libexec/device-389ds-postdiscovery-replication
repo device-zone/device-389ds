@@ -299,8 +299,8 @@ EOF
 
     rm -f "$line/added"
 
-  # update new certificates
-  elif test -f "$line/updated"; then
+  # refresh certificates
+  else
 
     usercerts=
     usersubjects=
