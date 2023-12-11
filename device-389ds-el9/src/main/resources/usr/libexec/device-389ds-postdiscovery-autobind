@@ -8,6 +8,8 @@
 
 set -e
 
+exec 2> >(logger -t ${0})
+
 instance="${1}"
 
 # make sure autobind is enabled

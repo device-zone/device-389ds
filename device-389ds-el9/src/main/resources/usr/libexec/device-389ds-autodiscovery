@@ -9,6 +9,7 @@
 set -e
 umask 0007
 
+exec 2> >(logger -t ${0})
 
 #
 # Handle the cleanup

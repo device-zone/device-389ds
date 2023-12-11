@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -e
+
+exec 2> >(logger -t ${0})
+
 #
 # Add/update/remove TLS
 

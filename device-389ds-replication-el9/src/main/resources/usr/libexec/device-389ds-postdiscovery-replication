@@ -8,6 +8,10 @@
 
 set -e
 
+instance="${1}"
+
+exec 2> >(logger -t ${0})
+
 #
 # Handle the cleanup
 # ------------------
@@ -26,8 +30,6 @@ cd "${tmpdir}"
 
 #
 # Add/update/remove replication
-
-instance="${1}"
 
 # make sure replication is present
 logger -t dirsrv-postdiscovery "adding replication manager on instance ${instance}..."
@@ -268,7 +270,7 @@ EOF
     while read usercert; do
       usercerts+="userCertificate:< file://${usercert}"$'\n'
       usercerts+="nsCertSubjectDN: $(openssl x509 -noout -subject -nameopt RFC2253 -in "${usercert}" | cut -c 9-)"$'\n'
-    done < <(find . -name "${cert}-replicate.der.*" -mindepth 1 -maxdepth 1 -type f | xargs realpath)
+    done < <(find . -name "${cert}-replicate.der.*" -mindepth 1 -maxdepth 1 -type f -exec realpath {} \;)
 
     ldapadd -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL <<- EOF || true
 dn: cn=${cert},ou=${userroot},ou=Replication Managers,cn=config
