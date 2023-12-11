@@ -272,6 +272,12 @@ EOF
       usercerts+="nsCertSubjectDN: $(openssl x509 -noout -subject -nameopt RFC2253 -in "${usercert}" | cut -c 9-)"$'\n'
     done < <(find . -name "${cert}-replicate.der.*" -mindepth 1 -maxdepth 1 -type f -exec realpath {} \;)
 
+    if test ! -f "$line/disabled.bin"; then
+      accountlock="false"
+    else
+      accountlock="true"
+    fi
+
     ldapadd -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL <<- EOF || true
 dn: cn=${cert},ou=${userroot},ou=Replication Managers,cn=config
 objectClass: top
@@ -279,12 +285,11 @@ objectClass: organizationalRole
 objectClass: nsAccount
 cn: ${cert}
 description: Replication user added by ${0}
+nsAccountLock: ${accountlock}
 ${usercerts}
 EOF
 
-    if test ! -f "$line/disabled.bin"; then
-
-      ldapmodify -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL <<- EOF || true
+    ldapmodify -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL <<- EOF || true
 dn: ou=${userroot},ou=Replication Managers,cn=config
 changetype: modify
 add: uniqueMember
@@ -292,15 +297,49 @@ uniqueMember: cn=${cert},ou=${userroot},ou=Replication Managers,cn=config
 
 EOF
 
-    fi
-
     rm -f "$line/added"
 
   # update new certificates
   elif test -f "$line/updated"; then
 
-    rm -f "$line/updated"
+    usercerts=
+    usersubjects=
 
+    redwax-tool --pem-in="/etc/pki/tls/certs/*" \
+                --filter=verify \
+                --filter-hostname "${tls_dns}" \
+                --filter-expiry=ignore-leaf \
+                --no-chain-out --no-root-out --no-crl-out --no-key-out \
+                --der-out "${cert}-replicate.der" \
+                --no-cert-out --chain-out --trust-out \
+                --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
+                --auto-out \
+                --nss-out=/etc/dirsrv/slapd-${instance}/ || echo "Could not find and verify certificate for replication" > "$line/error"
+
+    while read usercert; do
+      usercerts+="userCertificate:< file://${usercert}"$'\n'
+      usersubjects+="nsCertSubjectDN: $(openssl x509 -noout -subject -nameopt RFC2253 -in "${usercert}" | cut -c 9-)"$'\n'
+    done < <(find . -name "${cert}-replicate.der.*" -mindepth 1 -maxdepth 1 -type f -exec realpath {} \;)
+
+    if test ! -f "$line/disabled.bin"; then
+      accountlock="false"
+    else
+      accountlock="true"
+    fi
+
+    ldapmodify -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL <<- EOF || true
+dn: cn=${cert},ou=${userroot},ou=Replication Managers,cn=config
+changetype: modify
+replace: nsAccountLock
+nsAccountLock: ${accountlock}
+-
+replace: userCertificate
+${usercerts}-
+replace: nsCertSubjectDN
+${usersubjects}-
+EOF
+
+    rm -f "$line/updated"
 
   fi
 
