@@ -20,9 +20,9 @@
   </organization>
 
   <scm>
-    <connection>scm:svn:https://github.com/device-zone/device-389ds/trunk</connection>
-    <developerConnection>scm:svn:https://github.com/device-zone/device-389ds/trunk</developerConnection>
-    <url>https://github.com/device-zone/device-389ds/trunk</url>
+    <connection>scm:git:https://github.com/device-zone/device-389ds</connection>
+    <developerConnection>scm:git:https://github.com/device-zone/device-389ds</developerConnection>
+    <url>https://github.com/device-zone/device-389ds</url>
   </scm>
 
   <modules>
