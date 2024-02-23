@@ -6,43 +6,13 @@ umask 0002
 tmpdir="$(mktemp -d)"
 trap 'rm -rf -- "${tmpdir}"' EXIT
 
-OPTIONS="--add index --index index --port port --fqdn tls-dns --required --fqdn hostname --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance"
+OPTIONS="--add instance --port port --required --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance --relation-base /etc/device/system/pki/certificates --relation-name name --relation-suffix .txt --relation certificate"
 
 if [ "$1" == "--" ]; then
 
-  counter=2
-  while [ $counter -lt $# ]; do
-    if [ "${!counter}" = "hostname" ]; then
-      ((counter++))
-      redwax-tool --quiet \
-	          --pem-in="/etc/pki/tls/private/*" \
-                  --pem-in="/etc/pki/tls/certs/ca-bundle.trust.crt" \
-                  --pem-in="/etc/pki/tls/certs/*.pem" \
-                  --filter=verify \
-                  --filter-hostname="${!counter}" || { echo "Error: could not verify a certificate matching: ${!counter}"; exit 1; }
-      break;
-    fi
-    ((counter+=2))
-  done
-
   /usr/libexec/device-set ${OPTIONS} "$@"
 
-  find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
-  while read line; do
-
-    if test -f "$line/disabled.bin"; then
-      continue;
-    fi
-
-    if test ! -f "$line/name.txt"; then
-      continue;
-    fi
-    instance="$(head $line/name.txt)"
-
-    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart "dirsrv-autodiscovery@${instance}.service"
-    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart "dirsrv-postdiscovery@${instance}.service"
-
-  done
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-postdiscovery.service
 
 elif [ "$1" == "-c" ]; then
 

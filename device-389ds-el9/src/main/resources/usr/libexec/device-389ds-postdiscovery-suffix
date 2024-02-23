@@ -10,12 +10,21 @@ set -e
 
 exec 2> >(logger -t ${0})
 
+request="${1}"
+instance="${2}"
 
 #
 # Add/update/remove ldap backends/suffixes
 
 find /etc/device/services/ldap/suffix/ -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
+
+  if [ ! -e "$line/instance.d/name.txt" ]; then
+    continue;
+  fi
+  if [ "${instance}" != "$(head $line/instance.d/name.txt)" ]; then
+    continue;
+  fi
 
   target=$(readlink -f "$line")
 
@@ -29,52 +38,8 @@ while read line; do
   fi
   suffix="$(head $line/suffix.txt)"
 
-  if [ ! -e "$line/instance.d/name.txt" ]; then
-
-    # remove any orphaned configs
-    if test -f "$line/removed"; then
-
-      rm -f "${target}"/*
-      rmdir "${target}"
-      rm -f "${line}"
-
-    fi
-
-    continue;
-  fi
-  instance="$(head $line/instance.d/name.txt)"
-
-  if [ "${instance}" != "${1}" ]; then
-    continue;
-  fi
-
-  # add new instances
-  if test -f "$line/added"; then
-
-    if test ! -d "/etc/dirsrv/slapd-${instance}"; then
-      logger -t dirsrv-postdiscovery "ignoring directory server backend ${bename} with suffix ${suffix}: instance ${instance} does not exist."
-      continue
-    fi
-
-    # add instance
-    logger -t "dirsrv-postdiscovery@${instance}" "adding directory server backend ${bename} with suffix ${suffix} to instance ${instance}..."
-    dsconf "ldapi://%2frun%2fslapd-${instance}.socket" backend create --suffix "${suffix}" --be-name "${bename}" --create-suffix || echo "Could not create suffix" > "$line/error"
-    if test ! -f "$line/error"; then
-      logger -t "dirsrv-postdiscovery@${instance}" "added directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
-    else
-      logger -t "dirsrv-postdiscovery@${instance}" "failed to add directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
-    fi
-
-    rm -f "$line/added"
-
-  # update instances
-  elif test -f "$line/updated"; then
-
-
-    rm -f "$line/updated"
-
   # remove old instances
-  elif test -f "$line/removed"; then
+  if test -f "$line/removed"; then
 
     # remove instance, but only if no error was created making the database
     if test ! -f "$line/error" -a -d "/etc/dirsrv/slapd-${instance}"; then
@@ -106,6 +71,31 @@ EOF
     rm -f "${target}"/*
     rmdir "${target}"
     rm -f "${line}"
+
+  # add new instances
+  elif test -f "$line/added"; then
+
+    if test ! -d "/etc/dirsrv/slapd-${instance}"; then
+      logger -t dirsrv-postdiscovery "ignoring directory server backend ${bename} with suffix ${suffix}: instance ${instance} does not exist."
+      continue
+    fi
+
+    # add instance
+    logger -t "dirsrv-postdiscovery@${instance}" "adding directory server backend ${bename} with suffix ${suffix} to instance ${instance}..."
+    retry --times=3 --until=success dsconf "ldapi://%2frun%2fslapd-${instance}.socket" backend create --suffix "${suffix}" --be-name "${bename}" --create-suffix || echo "Could not create suffix" > "$line/error"
+    if test ! -f "$line/error"; then
+      logger -t "dirsrv-postdiscovery@${instance}" "added directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
+    else
+      logger -t "dirsrv-postdiscovery@${instance}" "failed to add directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
+    fi
+
+    rm -f "$line/added"
+
+  # update instances
+  elif test -f "$line/updated"; then
+
+    rm -f "$line/updated"
+
   fi
 
 done

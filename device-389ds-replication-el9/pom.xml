@@ -96,6 +96,19 @@
               </sources>
             </mapping>
             <mapping>
+              <directory>/usr/libexec/device-autodiscovery/pki-certificates.d</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/usr/libexec/device-pki-replication-certificate-autodiscovery-389ds</location>
+                  <destination>50-389ds-replication</destination>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
               <directory>/etc/device/services/ldap/replication</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>2775</filemode>

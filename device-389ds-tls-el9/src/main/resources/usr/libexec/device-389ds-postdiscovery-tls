@@ -4,6 +4,9 @@ set -e
 
 exec 2> >(logger -t ${0})
 
+request="${1}"
+instance="${2}"
+
 #
 # Add/update/remove TLS
 
@@ -13,27 +16,21 @@ while read line; do
   if [ ! -e "$line/instance.d/name.txt" ]; then
     continue;
   fi
-  instance="$(head -n 1 $line/instance.d/name.txt)"
-
-  if [ "${instance}" != "${1}" ]; then
+  if [ "${instance}" != "$(head $line/instance.d/name.txt)" ]; then
     continue;
-  fi
-
-  if [ ! -e "$line/hostname.txt" ]; then
-    continue;
-  fi
-  hostname="$(head -n 1 $line/hostname.txt)"
-
-  if [ -e "$line/tls_dns.txt" ]; then
-    tls_dns="$(head -n 1 $line/tls_dns.txt)"
-  else
-    tls_dns="${hostname}"
   fi
 
   if [ -e "$line/port.txt" ]; then
     port="$(head -n 1 $line/port.txt)"
   else
     port=636
+  fi
+
+  if test ! -L "$line/certificate.d"; then
+    continue;
+  else
+    target=$(readlink -f "$line/certificate.d")
+    uuid="$(basename $target)"
   fi
 
   # remove old instances
@@ -85,6 +82,17 @@ while read line; do
 
     else
 
+      rm -f "/run/dirsrv/slapd-${instance}-replication-${uuid}.yaml"
+
+      logger -t dirsrv-postdiscovery "${request}ing 389ds replication certificate..."
+
+      redwax-tool --pem-in="/run/pki-certificate/certificate-${uuid}.pem" \
+                  --cert-out --no-chain-out \
+                  --der-out="/run/dirsrv/slapd-${instance}-replication-${uuid}" \
+                  --metadata-out="/run/dirsrv/slapd-${instance}-server-${uuid}.yaml"
+
+      logger -t dirsrv-postdiscovery "${request}ed 389ds replication certificate."
+
       logger -t dirsrv-postdiscovery "setting directory server tls on instance ${instance}..."
 
       dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security set \
@@ -114,7 +122,7 @@ while read line; do
 
       logger -t dirsrv-postdiscovery "restarting directory server on instance ${instance}..."
 
-      systemctl restart "dirsrv@${instance}"
+      systemctl --no-block restart "dirsrv@${instance}"
 
       if test ! -f "$line/error"; then
         logger -t dirsrv-postdiscovery "restarted directory server on instance ${instance}."

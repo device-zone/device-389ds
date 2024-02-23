@@ -3,31 +3,17 @@
 set -e
 umask 0002
 
+OPTIONS="--mark instance --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance"
+
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set --mark index --index index "$@"
+  /usr/libexec/device-set ${OPTIONS} "$@"
 
-  find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
-  while read line; do
-
-    if test -f "$line/disabled.bin"; then
-      continue;
-    fi
-
-    if test ! -f "$line/name.txt"; then
-      continue;
-    fi
-    instance="$(head $line/name.txt)"
-
-    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart "dirsrv-postdiscovery@${instance}.service"
-
-  done
-
-  /usr/libexec/device-set --reindex index --index index
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart dirsrv-postdiscovery.service
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set --mark index --index index "$@"
+  /usr/libexec/device-set ${OPTIONS} "$@" | cat
 
 fi
 

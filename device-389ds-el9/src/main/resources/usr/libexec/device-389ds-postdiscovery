@@ -10,6 +10,8 @@ set -e
 
 exec 2> >(logger -t ${0})
 
+request="${1}"
+instance="${2}"
 
 #
 # Handle the cleanup
@@ -31,15 +33,13 @@ cd "${tmpdir}"
 #
 # Per instance? Run all scripts
 
-if [ $# -ne 0 ]; then
-
-  instance="${1}"
+if [ $# -gt 1 ]; then
 
   logger -t "dirsrv-postdiscovery@${instance}" "running postdiscovery for directory server instance ${instance}..."
 
   find "$0.d" -type f -executable | sort | \
   while read x; do
-    "$x" "${instance}" < /dev/null || touch error;
+    "$x" "${request}" "${instance}" < /dev/null || touch error;
   done
 
   if test ! -f "error"; then
@@ -49,6 +49,21 @@ if [ $# -ne 0 ]; then
     logger -t "dirsrv-postdiscovery@${instance}" "failed postdiscovery for directory server instance ${instance}."
     exit 1
   fi
+
+# All instances
+else
+
+  find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
+  while read line; do
+
+    if test ! -f "$line/name.txt"; then
+      continue;
+    fi
+    instance="$(head $line/name.txt)"
+
+    /usr/bin/systemctl --no-block restart "dirsrv-postdiscovery@${instance}.service"
+
+  done
 
 fi
 

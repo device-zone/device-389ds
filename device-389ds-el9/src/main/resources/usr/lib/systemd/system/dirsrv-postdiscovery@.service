@@ -2,16 +2,13 @@
   
 [Unit]
 Description=389 Directory Server Postdiscovery %i.
-#Requires=dirsrv.target
-PartOf=dirsrv.target
-ReloadPropagatedFrom=dirsrv@%i.service
 After=dirsrv@%i.service
-After=firewalld.service
+After=dirsrv-postdiscovery.service
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash /usr/libexec/device-postdiscovery/389ds %i
-ExecReload=/bin/bash /usr/libexec/device-postdiscovery/389ds %i
+ExecStart=/bin/bash /usr/libexec/device-postdiscovery/389ds start %i
+ExecReload=/bin/bash /usr/libexec/device-postdiscovery/389ds reload %i
 RemainAfterExit=on
 
 [Install]

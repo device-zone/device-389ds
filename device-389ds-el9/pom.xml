@@ -103,6 +103,19 @@
               <groupname>root</groupname>
             </mapping>
             <mapping>
+              <directory>/usr/libexec/device-autodiscovery/389ds.d</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/usr/libexec/device-389ds-autodiscovery-create</location>
+                  <destination>05-create</destination>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
               <directory>/usr/libexec/device-postdiscovery</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
@@ -153,6 +166,10 @@
                 <source>
                   <location>target/classes/usr/lib/systemd/system/dirsrv-autodiscovery@.service</location>
                   <destination>dirsrv-autodiscovery@.service</destination>
+                </source>
+                <source>
+                  <location>target/classes/usr/lib/systemd/system/dirsrv-postdiscovery.service</location>
+                  <destination>dirsrv-postdiscovery.service</destination>
                 </source>
                 <source>
                   <location>target/classes/usr/lib/systemd/system/dirsrv-postdiscovery@.service</location>

@@ -10,7 +10,8 @@ set -e
 
 exec 2> >(logger -t ${0})
 
-instance="${1}"
+request="${1}"
+instance="${2}"
 
 # make sure autobind is enabled
 logger -t "dirsrv-postdiscovery@${instance}" "enabling directory server autobind on instance ${instance}..."

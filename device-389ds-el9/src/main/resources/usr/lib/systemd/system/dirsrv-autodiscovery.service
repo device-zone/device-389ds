@@ -2,16 +2,12 @@
 
 [Unit]
 Description=389 Directory Server Configuration Autodiscovery
-#Requires=dirsrv.target
-PartOf=dirsrv.target
-ReloadPropagatedFrom=dirsrv.target
-Before=dirsrv@.service
 After=firewalld.service
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash /usr/libexec/device-autodiscovery/389ds
-ExecReload=/bin/bash /usr/libexec/device-autodiscovery/389ds
+ExecStart=/bin/bash /usr/libexec/device-autodiscovery/389ds start
+ExecReload=/bin/bash /usr/libexec/device-autodiscovery/389ds reload
 RemainAfterExit=on
 
 [Install]

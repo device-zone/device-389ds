@@ -4,6 +4,9 @@ set -e
 
 exec 2> >(logger -t ${0})
 
+request="${1}"
+instance="${2}"
+
 #
 # Add/update/remove TLS
 
@@ -13,21 +16,8 @@ while read line; do
   if [ ! -e "$line/instance.d/name.txt" ]; then
     continue;
   fi
-  instance="$(head $line/instance.d/name.txt)"
-
-  if [ "${instance}" != "${1}" ]; then
+  if [ "${instance}" != "$(head $line/instance.d/name.txt)" ]; then
     continue;
-  fi
-
-  if [ ! -e "$line/hostname.txt" ]; then
-    continue;
-  fi
-  hostname="$(head -n 1 $line/hostname.txt)"
-
-  if [ -e "$line/tls_dns.txt" ]; then
-    tls_dns="$(head -n 1 $line/tls_dns.txt)"
-  else
-    tls_dns="${hostname}"
   fi
 
   logger -t "$0"  "Notice: creating directory server certmap.conf for ${instance}..."
@@ -41,34 +31,10 @@ certmap default         default
 default:verifycert      on
 default:CmapLdapAttr    nsCertSubjectDN
 EOF
+
   mv "${certmap_conf}" "/etc/dirsrv/slapd-${instance}/certmap.conf"
 
   logger -t "$0"  "Notice: created directory server certmap.conf for ${instance}."
-
-  if test ! -f "$line/disabled.bin"; then
-
-    logger -t dirsrv-autodiscovery "Notice: importing directory server certificate/key on instance ${instance}..."
-
-    redwax-tool --pem-in="/etc/pki/tls/private/*" \
-                --pem-in="/etc/pki/tls/certs/ca-bundle.trust.crt" \
-                --pem-in="/etc/pki/tls/certs/*.pem" \
-                --filter=verify \
-                --filter-hostname "${tls_dns}" \
-                --filter-expiry=ignore-leaf \
-                --label-out Server-Cert \
-                --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
-                --auto-out \
-                --trust-out \
-                --nss-out=/etc/dirsrv/slapd-${instance}/ || echo "Could not import cert/key for tls" > "$line/error"
-
-    if test ! -f "$line/error"; then
-      logger -t dirsrv-postdiscovery "Notice: imported directory server certificate/key on instance ${instance}."
-    else
-      logger -t dirsrv-postdiscovery "Error: failed to import directory server certificate/key for instance ${instance}."
-      continue
-    fi
-
-  fi
 
 done
 

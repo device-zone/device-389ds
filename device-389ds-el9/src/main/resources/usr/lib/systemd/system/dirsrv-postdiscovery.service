@@ -1,0 +1,15 @@
+# systemd service for managing all 389ds postconfiguration.
+  
+[Unit]
+Description=389 Directory Server Postdiscovery.
+After=dirsrv-autodiscovery.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/device-postdiscovery/389ds start
+ExecReload=/bin/bash /usr/libexec/device-postdiscovery/389ds reload
+RemainAfterExit=on
+
+[Install]
+WantedBy=multi-user.target
+
