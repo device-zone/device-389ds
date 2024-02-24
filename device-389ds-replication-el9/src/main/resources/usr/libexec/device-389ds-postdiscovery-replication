@@ -197,6 +197,9 @@ done
 #
 # Walk through each certificate allowed to replicate to us, enable or disable as needed.
 #
+# NOTE: you need to restart the service after every change to the certificates list, until
+# this bug is fixed: https://github.com/389ds/389-ds-base/issues/6106
+#
 find /etc/device/services/ldap/replication/certificate/ -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
 
