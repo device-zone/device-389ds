@@ -39,14 +39,14 @@ if [ $# -gt 1 ]; then
 
   find "$0.d" -type f -executable | sort | \
   while read x; do
-    "$x" "${request}" "${instance}" < /dev/null || touch error;
+    "$x" "${request}" "${instance}" < /dev/null || echo "$x" > error;
   done
 
   if test ! -f "error"; then
     logger -t "dirsrv-postdiscovery@${instance}" "completed postdiscovery for directory server instance ${instance}."
     exit 0
   else
-    logger -t "dirsrv-postdiscovery@${instance}" "failed postdiscovery for directory server instance ${instance}."
+    logger -t "dirsrv-postdiscovery@${instance}" "failed postdiscovery for directory server instance ${instance}: $(cat error) ${request} ${instance}"
     exit 1
   fi
 
