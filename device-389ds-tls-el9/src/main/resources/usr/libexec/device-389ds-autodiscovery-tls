@@ -41,7 +41,7 @@ while read line; do
     redwax-tool --pem-in="/run/pki-certificate/certificate-${uuid}.pem" \
                 --cert-out --chain-out --trust-out \
                 --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
-                --auto-out \
+                --label-out=Server-Cert \
                 --nss-out=/etc/dirsrv/slapd-${instance}/ \
                 --metadata-out="/run/dirsrv/slapd-${instance}-server-${uuid}.yaml"
 
