@@ -20,6 +20,37 @@ while read line; do
     continue;
   fi
 
+  if test ! -L "$line/certificate.d"; then
+    continue;
+  else
+    target=$(readlink -f "$line/certificate.d")
+    uuid="$(basename $target)"
+  fi
+
+  # remove old instances? skip
+  if test -f "$line/removed"; then
+    continue;
+  fi
+
+  if test "/run/pki-certificate/certificate-${uuid}.pem" -nt "/etc/dirsrv/slapd-${instance}/cert9.db"; then
+
+    rm -f "/run/dirsrv/slapd-${instance}-server-${uuid}.yaml"
+
+    logger -t dirsrv-autodiscovery@${instance} "${request}ing 389ds TLS certificate..."
+
+    redwax-tool --pem-in="/run/pki-certificate/certificate-${uuid}.pem" \
+                --cert-out --chain-out --trust-out \
+                --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
+                --auto-out \
+                --nss-out=/etc/dirsrv/slapd-${instance}/ \
+                --metadata-out="/run/dirsrv/slapd-${instance}-server-${uuid}.yaml"
+
+    logger -t dirsrv-autodiscovery@${instance} "${request}ed 389ds TLS certificate."
+
+    systemctl --no-block try-restart "dirsrv@${instance}"
+
+  fi
+
   logger -t "$0"  "Notice: creating directory server certmap.conf for ${instance}..."
 
   certmap_conf=`mktemp /etc/dirsrv/slapd-${instance}/certmap.conf.XXXXXX`

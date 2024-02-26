@@ -21,7 +21,7 @@ uuid="${2}"
 #
 # Configure certs/keys
 
-if test "${request}" == "start" -o "${request}" == "reload" -o "${request}" == "restart"; then
+if test "${request}" == "reload" -o "${request}" == "restart"; then
 
   find /etc/device/services/ldap/replication/certificate/ -mindepth 1 -maxdepth 1 -type l | \
   while read line; do
@@ -39,9 +39,9 @@ if test "${request}" == "start" -o "${request}" == "reload" -o "${request}" == "
       uuid="$(basename $target)"
     fi
 
-  done
+    systemctl --no-block try-restart "dirsrv-postdiscovery@${instance}"
 
-#elif test "${request}" == "stop"; then
+  done
 
 fi
 

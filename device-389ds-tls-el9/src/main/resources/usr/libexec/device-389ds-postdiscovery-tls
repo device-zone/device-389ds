@@ -82,17 +82,6 @@ while read line; do
 
     else
 
-      rm -f "/run/dirsrv/slapd-${instance}-replication-${uuid}.yaml"
-
-      logger -t dirsrv-postdiscovery "${request}ing 389ds replication certificate..."
-
-      redwax-tool --pem-in="/run/pki-certificate/certificate-${uuid}.pem" \
-                  --cert-out --no-chain-out \
-                  --der-out="/run/dirsrv/slapd-${instance}-replication-${uuid}" \
-                  --metadata-out="/run/dirsrv/slapd-${instance}-server-${uuid}.yaml"
-
-      logger -t dirsrv-postdiscovery "${request}ed 389ds replication certificate."
-
       logger -t dirsrv-postdiscovery "setting directory server tls on instance ${instance}..."
 
       dsconf "ldapi://%2frun%2fslapd-${instance}.socket" security set \
