@@ -3,7 +3,7 @@
 set -e
 umask 0002
 
-OPTIONS="--show name --hostname name --show-flags disabled --show-table name,host,port,suffix --flag X --polar disabled --port port --required --fqdn host --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix"
+OPTIONS="--show name --hostname name --show-flags disabled --show-table name,host,port,suffix,client-certificate,ca-certificate --flag X --polar disabled --port port --required --fqdn host --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix --relation-base /etc/device/system/pki/certificates --relation-name name --relation-suffix .txt --relation client-certificate --symlink-base /etc/pki/tls/certs --symlink-suffix .crt --symlink ca-certificate"
 
 if [ "$1" == "--" ]; then
 

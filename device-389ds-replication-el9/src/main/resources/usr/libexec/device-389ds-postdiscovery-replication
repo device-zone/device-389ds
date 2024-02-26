@@ -13,6 +13,8 @@ instance="${2}"
 
 exec 2> >(logger -t ${0})
 
+umask 0027
+
 #
 # Handle the cleanup
 # ------------------
@@ -407,36 +409,95 @@ while read line; do
 
     dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt delete --suffix "${suffix}" "${agreement}"
 
+    if test -L "$line/client-certificate.d"; then
+
+      target=$(readlink -f "$line/client-certificate.d")
+      uuid="$(basename $target)"
+
+      rm -f "/run/dirsrv/slapd-${instance}-agreement-${uuid}.pem"
+      rm -f "/run/dirsrv/slapd-${instance}-agreement-${uuid}.yaml"
+
+    fi
+
+    if test -L "$line/ca-certificate.crt"; then
+
+      rm -f "/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.pem"
+      rm -f "/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.yaml"
+
+    fi
+
     # remove folder
     rm -f "${target}"/*
     rmdir "${target}"
     rm -f "${line}"
 
-  # add new agreements
-  elif test -f "$line/added"; then
+  # generate certs if not done earlier in autodiscovery
+  else
 
-    dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt create --suffix "${suffix}" --host "${hostname}" --port "${port}" --conn-protocol "LDAPS" --bind-method "SSLCLIENTAUTH" "${agreement}"
+    options=
 
-    if test -f "$line/disabled.bin"; then
-      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt disable --suffix "${suffix}" "${agreement}"
-    fi
+    if test -L "$line/client-certificate.d"; then
 
-    rm -f "$line/added"
+      target=$(readlink -f "$line/client-certificate.d")
+      uuid="$(basename $target)"
 
-  # update existing agreements
-  elif test -f "$line/updated"; then
+      redwax-tool --pem-in="/run/pki-certificate/certificate-${uuid}.pem" \
+                  --chain-out --no-root-out --no-crl-out --key-out \
+                  --user-out=dirsrv \
+                  --pem-out="/run/dirsrv/slapd-${instance}-agreement-${uuid}.pem" \
+                  --metadata-out="/run/dirsrv/slapd-${instance}-agreement-${uuid}.yaml"
 
-    rm -f "$line/error"
+      options+=" --conn-tls-uri /run/dirsrv/slapd-${instance}-agreement-${uuid}.pem"
 
-    dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt set --suffix "${suffix}" --host "${hostname}" --port "${port}" --conn-protocol "LDAPS" --bind-method "SSLCLIENTAUTH" "${agreement}"
-
-    if test -f "$line/disabled.bin"; then
-      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt disable --suffix "${suffix}" "${agreement}"
     else
-      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt enable --suffix "${suffix}" "${agreement}"
+
+      options+=" --no-conn-tls-uri"
+
     fi
 
-    rm -f "$line/updated"
+    if test -L "$line/ca-certificate.crt"; then
+
+      redwax-tool --pem-in="$line/ca-certificate.crt" \
+                  --root-out \
+                  --user-out=dirsrv \
+                  --pem-out="/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.pem" \
+                  --metadata-out="/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.yaml"
+
+      options+=" --conn-tls-ca-uri /run/dirsrv/slapd-${instance}-agreement-${uuid}.pem"
+
+    else
+
+      options+=" --no-conn-tls-ca-uri"
+
+    fi
+
+    # add new agreements
+    if test -f "$line/added"; then
+
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt create --suffix "${suffix}" --host "${hostname}" --port "${port}" --conn-protocol "LDAPS" --bind-method "SSLCLIENTAUTH"${options} "${agreement}"
+
+      if test -f "$line/disabled.bin"; then
+        dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt disable --suffix "${suffix}" "${agreement}"
+      fi
+
+      rm -f "$line/added"
+
+    # update existing agreements
+    elif test -f "$line/updated"; then
+
+      rm -f "$line/error"
+
+      dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt set --suffix "${suffix}" --host "${hostname}" --port "${port}" --conn-protocol "LDAPS" --bind-method "SSLCLIENTAUTH"${options} "${agreement}"
+
+      if test -f "$line/disabled.bin"; then
+        dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt disable --suffix "${suffix}" "${agreement}"
+      else
+        dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt enable --suffix "${suffix}" "${agreement}"
+      fi
+
+      rm -f "$line/updated"
+
+    fi
 
   fi
 

@@ -1,6 +1,86 @@
 #!/bin/bash
 
 #
-# Add/update/remove replication
+# 389 Directory Server Autodiscovery - replication
+# ================================================
+#
+# This script adds replication to instances.
+
+set -e
+
+request="${1}"
+instance="${2}"
+
+exec 2> >(logger -t ${0})
+
+umask 0027
+
+#
+# Walk through each agreement for replication, export certificates as needed.
+#
+find /etc/device/services/ldap/replication/agreement/ -mindepth 1 -maxdepth 1 -type l | \
+while read line; do
+
+  if [ ! -e "$line/suffix.d/instance.d/name.txt" ]; then
+    continue;
+  fi
+  if [ "${instance}" != "$(head -n 1 $line/suffix.d/instance.d/name.txt)" ]; then
+    continue;
+  fi
+
+  if [ ! -e "$line/name.txt" ]; then
+    continue;
+  fi
+
+  agreement="$(head -n 1 $line/name.txt)"
+
+  # remove old agreements
+  if test -f "$line/removed"; then
+
+    if test -L "$line/client-certificate.d"; then
+
+      target=$(readlink -f "$line/client-certificate.d")
+      uuid="$(basename $target)"
+
+      rm -f "/run/dirsrv/slapd-${instance}-agreement-${uuid}.pem"
+      rm -f "/run/dirsrv/slapd-${instance}-agreement-${uuid}.yaml"
+
+    fi
+
+    if test -L "$line/ca-certificate.crt"; then
+
+      rm -f "/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.pem"
+      rm -f "/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.yaml"
+
+    fi
+
+  else
+
+    if test -L "$line/client-certificate.d"; then
+
+      target=$(readlink -f "$line/client-certificate.d")
+      uuid="$(basename $target)"
+
+      redwax-tool --pem-in="/run/pki-certificate/certificate-${uuid}.pem" \
+                  --chain-out --no-root-out --no-crl-out --key-out \
+                  --user-out=dirsrv \
+                  --pem-out="/run/dirsrv/slapd-${instance}-agreement-${uuid}.pem" \
+                  --metadata-out="/run/dirsrv/slapd-${instance}-agreement-${uuid}.yaml"
+
+    fi
+
+    if test -L "$line/ca-certificate.crt"; then
+
+      redwax-tool --pem-in="$line/ca-certificate.crt" \
+                  --root-out \
+                  --user-out=dirsrv \
+                  --pem-out="/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.pem" \
+                  --metadata-out="/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.yaml"
+
+    fi
+
+  fi
+
+done
 
 
