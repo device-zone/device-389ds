@@ -51,6 +51,24 @@ while read line; do
 
   fi
 
+  if test "$line/ca-certificate.crt" -nt "/etc/dirsrv/slapd-${instance}/cert9.db"; then
+
+    rm -f "/run/dirsrv/slapd-${instance}-server-ca-certificate.yaml"
+
+    logger -t dirsrv-autodiscovery@${instance} "${request}ing 389ds TLS ca-certificate..."
+
+    redwax-tool --trust-pem-in="$line/ca-certificate.crt" \
+                --no-cert-out --no-chain-out --trust-out \
+                --secret-token-out="/etc/dirsrv/slapd-${instance}/pin.txt" \
+                --nss-out=/etc/dirsrv/slapd-${instance}/ \
+                --metadata-out="/run/dirsrv/slapd-${instance}-server-ca-certificate.yaml"
+
+    logger -t dirsrv-autodiscovery@${instance} "${request}ed 389ds TLS ca-certificate."
+
+    systemctl --no-block try-restart "dirsrv@${instance}"
+
+  fi
+
   logger -t "$0"  "Notice: creating directory server certmap.conf for ${instance}..."
 
   certmap_conf=`mktemp /etc/dirsrv/slapd-${instance}/certmap.conf.XXXXXX`
