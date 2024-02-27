@@ -4,7 +4,7 @@
   <parent>
     <artifactId>device-389ds</artifactId>
     <groupId>zone.device.platform</groupId>
-    <version>0.9.22-SNAPSHOT</version>
+    <version>0.9.22</version>
   </parent>
 
   <properties>
@@ -18,7 +18,7 @@
 
   <artifactId>device-389ds-server</artifactId>
   <groupId>zone.device.platform.el9</groupId>
-  <version>0.9.22-SNAPSHOT</version>
+  <version>0.9.22</version>
   <packaging>rpm</packaging>
   <name>device 389ds server applicance for el9</name>
   <description>Packaging for the 389ds server appliance for ${release.distribution}</description>
