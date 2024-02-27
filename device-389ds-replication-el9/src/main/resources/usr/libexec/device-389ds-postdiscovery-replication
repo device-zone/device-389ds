@@ -463,7 +463,7 @@ while read line; do
                   --pem-out="/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.pem" \
                   --metadata-out="/run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.yaml"
 
-      options+=" --conn-tls-ca-uri /run/dirsrv/slapd-${instance}-agreement-${uuid}.pem"
+      options+=" --conn-tls-ca-uri /run/dirsrv/slapd-${instance}-agreement-ca-${agreement}.pem"
 
     else
 
