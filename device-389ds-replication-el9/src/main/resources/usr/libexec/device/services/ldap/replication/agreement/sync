@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+umask 0002
+
+do_sync() {
+
+  if test ! -e "./suffix.d/instance.d/name.txt"; then
+    echo "Instance no longer exists"
+    exit 1
+  elif test ! -e "./suffix.d/suffix.txt"; then
+    echo "Suffix no longer exists"
+    exit 1
+  elif test -e "disabled.bin"; then
+    echo "Agreement is disabled"
+    exit 1
+  fi
+
+  agreement="$(head -n 1 ./suffix.d/instance.d/name.txt)"
+  suffix="$(head -n 1 ./suffix.d/suffix.txt)"
+
+  /usr/bin/sudo /usr/sbin/dsconf "ldapi://%2frun%2fslapd-${DEVICE_NAME}.socket" repl-agmt init --suffix "${suffix}" "${agreement}"
+
+}
+export -f do_sync
+
+OPTIONS="--exec name --hostname name"
+
+if [ "$1" == "--" ]; then
+
+  /usr/libexec/device-set ${OPTIONS} --command "/bin/bash -c do_sync" "$@"
+
+elif [ "$1" == "-c" ]; then
+
+  /usr/libexec/device-set ${OPTIONS} "$@"
+
+fi
+
