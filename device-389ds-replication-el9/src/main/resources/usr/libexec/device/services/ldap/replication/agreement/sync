@@ -16,10 +16,10 @@ do_sync() {
     exit 1
   fi
 
-  agreement="$(head -n 1 ./suffix.d/instance.d/name.txt)"
+  instance="$(head -n 1 ./suffix.d/instance.d/name.txt)"
   suffix="$(head -n 1 ./suffix.d/suffix.txt)"
 
-  /usr/bin/sudo /usr/sbin/dsconf "ldapi://%2frun%2fslapd-${DEVICE_NAME}.socket" repl-agmt init --suffix "${suffix}" "${agreement}"
+  /usr/bin/sudo /usr/sbin/dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt init --suffix "${suffix}" "${DEVICE_NAME}"
 
 }
 export -f do_sync

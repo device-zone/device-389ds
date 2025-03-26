@@ -232,6 +232,9 @@
                   <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/show</location>
                 </source>
                 <source>
+                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/status</location>
+                </source>
+                <source>
                   <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/sync</location>
                 </source>
               </sources>
