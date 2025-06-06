@@ -85,11 +85,15 @@ EOF
     retry --times=3 --until=success dsconf "ldapi://%2frun%2fslapd-${instance}.socket" backend create --suffix "${suffix}" --be-name "${bename}" --create-suffix || echo "Could not create suffix" > "$line/error"
     if test ! -f "$line/error"; then
       logger -t "dirsrv-postdiscovery@${instance}" "added directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
+
+      rm -f "$line/added"
+
     else
       logger -t "dirsrv-postdiscovery@${instance}" "failed to add directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
-    fi
 
-    rm -f "$line/added"
+      # leave added in place, we will try again
+
+    fi
 
   # update instances
   elif test -f "$line/updated"; then
