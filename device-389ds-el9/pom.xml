@@ -261,6 +261,7 @@
             <require>retry</require>
             <require>expect</require>
             <require>device</require>
+            <require>sequence &gt;= 1.1.0</require>
           </requires>
         </configuration>
       </plugin>

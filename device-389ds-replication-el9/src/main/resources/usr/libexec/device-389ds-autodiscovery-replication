@@ -11,8 +11,6 @@ set -e
 request="${1}"
 instance="${2}"
 
-exec 2> >(logger -t ${0})
-
 umask 0027
 
 #

@@ -13,22 +13,6 @@ exec 2> >(logger -t ${0})
 request="${1}"
 instance="${2}"
 
-#
-# Handle the cleanup
-# ------------------
-cleanup_before_exit () {
-  if [ -d "${tmpdir}" ]; then
-    rm -rf "${tmpdir}"
-  fi
-}
-# be in a temporay workspace (this works on linux and macosx)
-tmpdir=`mktemp -d 2>/dev/null || mktemp -d -t 'tmpdir'`
-# trap catches the exit signal and runs the specified function
-trap cleanup_before_exit EXIT
-# be in our directory
-cd "${tmpdir}"
-
-
 
 #
 # Per instance? Run all scripts
@@ -37,12 +21,7 @@ if [ $# -gt 1 ]; then
 
   logger -t "dirsrv-postdiscovery@${instance}" "running postdiscovery for directory server instance ${instance}..."
 
-  find "$0.d" -type f -executable | sort | \
-  while read x; do
-    "$x" "${request}" "${instance}" < /dev/null || echo "$x" > error;
-  done
-
-  if test ! -f "error"; then
+  if /usr/bin/sequence -s daemon.info -b "/usr/libexec" "device-postdiscovery/389ds.d" "${request}" "${instance}" < /dev/null; then
     logger -t "dirsrv-postdiscovery@${instance}" "completed postdiscovery for directory server instance ${instance}."
     exit 0
   else
