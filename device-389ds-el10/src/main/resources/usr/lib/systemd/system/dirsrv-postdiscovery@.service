@@ -7,8 +7,8 @@ After=dirsrv-postdiscovery.service
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash /usr/libexec/device-postdiscovery/389ds start %i
-ExecReload=/bin/bash /usr/libexec/device-postdiscovery/389ds reload %i
+ExecStart=/usr/bin/sequence -s daemon.info -b "/usr/libexec" "device-postdiscovery/389ds.d" start %i
+ExecReload=/usr/bin/sequence -s daemon.info -b "/usr/libexec" "device-postdiscovery/389ds.d" reload %i
 RemainAfterExit=on
 
 [Install]

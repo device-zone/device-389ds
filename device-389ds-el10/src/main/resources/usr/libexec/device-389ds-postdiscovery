@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
   
 #
 # 389 Directory Server Postdiscovery
@@ -7,42 +7,22 @@
 # This script autogenerates any required 389ds databases.
 
 set -e
-
-exec 2> >(logger -t ${0})
+umask 0007
 
 request="${1}"
 instance="${2}"
 
 
-#
-# Per instance? Run all scripts
-
-if [ $# -gt 1 ]; then
-
-  logger -t "dirsrv-postdiscovery@${instance}" "running postdiscovery for directory server instance ${instance}..."
-
-  if /usr/bin/sequence -s daemon.info -b "/usr/libexec" "device-postdiscovery/389ds.d" "${request}" "${instance}" < /dev/null; then
-    logger -t "dirsrv-postdiscovery@${instance}" "completed postdiscovery for directory server instance ${instance}."
-    exit 0
-  else
-    logger -t "dirsrv-postdiscovery@${instance}" "failed postdiscovery for directory server instance ${instance}: $(cat error) ${request} ${instance}"
-    exit 1
-  fi
-
 # All instances
-else
+find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
+while read line; do
 
-  find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
-  while read line; do
+  if test ! -f "$line/name.txt"; then
+    continue;
+  fi
+  instance="$(head $line/name.txt)"
 
-    if test ! -f "$line/name.txt"; then
-      continue;
-    fi
-    instance="$(head $line/name.txt)"
+  /usr/bin/systemctl --no-block restart "dirsrv-postdiscovery@${instance}.service"
 
-    /usr/bin/systemctl --no-block restart "dirsrv-postdiscovery@${instance}.service"
-
-  done
-
-fi
+done
 

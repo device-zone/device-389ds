@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #
 # 389 Directory Server Autodiscovery
@@ -9,28 +9,8 @@
 set -e
 umask 0007
 
-exec 2> >(logger -t ${0})
-
 request="${1}"
 instance="${2}"
-
-
-#
-# Per instance? Run all scripts
-
-if [ $# -gt 1 ]; then
-
-  logger -t "dirsrv-autodiscovery@${instance}" "running autodiscovery for directory server instance ${instance}..."
-
-  if /usr/bin/sequence -s daemon.info -b "/usr/libexec" "device-autodiscovery/389ds.d" "${request}" "${instance}" < /dev/null; then
-    logger -t "dirsrv-autodiscovery@${instance}" "completed autodiscovery for directory server instance ${instance}."
-    exit 0
-  else
-    logger -t "dirsrv-autodiscovery@${instance}" "failed autodiscovery for directory server instance ${instance}: $(cat error) ${request} ${instance}"
-    exit 1
-  fi
-
-fi
 
 #
 # Add/remove ldap instances
