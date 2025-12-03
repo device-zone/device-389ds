@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# bash needed for function export
+
 set -e
 umask 0002
 
@@ -11,7 +13,7 @@ do_sync() {
   elif test ! -e "./suffix.d/suffix.txt"; then
     echo "Suffix no longer exists"
     exit 1
-  elif test -e "disabled.bin"; then
+  elif test -e "disabled.polar"; then
     echo "Agreement is disabled"
     exit 1
   fi

@@ -356,7 +356,7 @@ while read line; do
     create_instance "${request}" "${instance}" "${line}"
     logger -t dirsrv-autodiscovery "created dirsrv server instance ${instance}."
 
-    if test ! -f "$line/disabled.bin"; then
+    if test ! -f "$line/disabled.polar"; then
 
       systemctl --no-block start "dirsrv@${instance}"
 
@@ -367,7 +367,7 @@ while read line; do
   # update instances
   elif test -f "$line/updated"; then
 
-    if test -f "$line/disabled.bin"; then
+    if test -f "$line/disabled.polar"; then
 
       systemctl --no-block stop "dirsrv@${instance}"
 
@@ -382,7 +382,7 @@ while read line; do
   # something we depend on changed
   else
 
-    if test -f "$line/disabled.bin"; then
+    if test -f "$line/disabled.polar"; then
 
       systemctl --no-block stop "dirsrv@${instance}"
 
