@@ -83,7 +83,7 @@
           </defineStatements>
           <mappings>
             <mapping>
-              <directory>/usr/libexec/device-autodiscovery</directory>
+              <directory>/usr/libexec/device/autodiscovery</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -96,14 +96,14 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-autodiscovery/389ds.d</directory>
+              <directory>/usr/libexec/device/autodiscovery/389ds.d</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-autodiscovery/389ds.d</directory>
+              <directory>/usr/libexec/device/autodiscovery/389ds.d</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -116,7 +116,7 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-postdiscovery</directory>
+              <directory>/usr/libexec/device/postdiscovery</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -129,14 +129,14 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-postdiscovery/389ds.d</directory>
+              <directory>/usr/libexec/device/postdiscovery/389ds.d</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-postdiscovery/389ds.d</directory>
+              <directory>/usr/libexec/device/postdiscovery/389ds.d</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -185,30 +185,30 @@
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/instance</directory>
+              <directory>/usr/libexec/device/state/services/ldap/instance</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/instance</directory>
+              <directory>/usr/libexec/device/state/services/ldap/instance</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/instance/add</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/instance/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/instance/remove</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/instance/remove</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/instance/set</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/instance/set</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/instance/show</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/instance/show</location>
                 </source>
               </sources>
             </mapping>
@@ -220,30 +220,30 @@
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/suffix</directory>
+              <directory>/usr/libexec/device/state/services/ldap/suffix</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/suffix</directory>
+              <directory>/usr/libexec/device/state/services/ldap/suffix</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/suffix/add</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/suffix/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/suffix/remove</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/suffix/remove</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/suffix/set</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/suffix/set</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/suffix/show</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/suffix/show</location>
                 </source>
               </sources>
             </mapping>

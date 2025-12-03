@@ -83,7 +83,7 @@
           </defineStatements>
           <mappings>
             <mapping>
-              <directory>/usr/libexec/device-autodiscovery/389ds.d</directory>
+              <directory>/usr/libexec/device/autodiscovery/389ds.d</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -96,7 +96,7 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-autodiscovery/pki-certificates.d</directory>
+              <directory>/usr/libexec/device/autodiscovery/pki-certificates.d</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -109,7 +109,7 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-postdiscovery/389ds.d</directory>
+              <directory>/usr/libexec/device/postdiscovery/389ds.d</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -129,30 +129,30 @@
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/tls</directory>
+              <directory>/usr/libexec/device/state/services/ldap/tls</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/tls</directory>
+              <directory>/usr/libexec/device/state/services/ldap/tls</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/tls/add</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/tls/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/tls/remove</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/tls/remove</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/tls/set</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/tls/set</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/tls/show</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/tls/show</location>
                 </source>
               </sources>
             </mapping>

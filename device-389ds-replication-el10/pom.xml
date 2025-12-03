@@ -83,7 +83,7 @@
           </defineStatements>
           <mappings>
             <mapping>
-              <directory>/usr/libexec/device-postdiscovery/389ds.d</directory>
+              <directory>/usr/libexec/device/postdiscovery/389ds.d</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -96,7 +96,7 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device-autodiscovery/pki-certificates.d</directory>
+              <directory>/usr/libexec/device/autodiscovery/pki-certificates.d</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -116,7 +116,7 @@
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication</directory>
+              <directory>/usr/libexec/device/state/services/ldap/replication</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
@@ -130,39 +130,39 @@
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/replica</directory>
+              <directory>/usr/libexec/device/state/services/ldap/replication/replica</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/replica</directory>
+              <directory>/usr/libexec/device/state/services/ldap/replication/replica</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/replica/add</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/replica/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/replica/remove</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/replica/remove</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/replica/show</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/replica/show</location>
                 </source>
               </sources>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication</directory>
+              <directory>/usr/libexec/device/state/services/ldap/replication</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>644</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/roles.txt</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/roles.txt</location>
                 </source>
               </sources>
             </mapping>
@@ -174,27 +174,27 @@
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/certificate</directory>
+              <directory>/usr/libexec/device/state/services/ldap/replication/certificate</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/certificate</directory>
+              <directory>/usr/libexec/device/state/services/ldap/replication/certificate</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/certificate/add</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/certificate/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/certificate/remove</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/certificate/remove</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/certificate/show</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/certificate/show</location>
                 </source>
               </sources>
             </mapping>
@@ -206,36 +206,36 @@
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/agreement</directory>
+              <directory>/usr/libexec/device/state/services/ldap/replication/agreement</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/services/ldap/replication/agreement</directory>
+              <directory>/usr/libexec/device/state/services/ldap/replication/agreement</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/add</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/agreement/add</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/remove</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/agreement/remove</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/set</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/agreement/set</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/show</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/agreement/show</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/status</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/agreement/status</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/services/ldap/replication/agreement/sync</location>
+                  <location>target/classes/usr/libexec/device/state/services/ldap/replication/agreement/sync</location>
                 </source>
               </sources>
             </mapping>
