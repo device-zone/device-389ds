@@ -83,7 +83,7 @@ while read line; do
   role="$(head -n 1 $line/role.txt)"
 
    # remove old instances
-  if test -f "$line/removed"; then
+  if test -f "$line/.removed"; then
 
     target=$(readlink -f "$line")
 
@@ -109,11 +109,12 @@ while read line; do
 
     # remove folder
     rm -f "${target}"/*
+    rm -f "${target}"/.removed
     rmdir "${target}"
     rm -f "${line}"
 
   # add/update new replication?
-  elif test -f "$line/added" -o -f "$line/updated"; then
+  elif test -f "$line/.added" -o -f "$line/.updated"; then
 
     rm -f "$line/error"
 
@@ -183,10 +184,10 @@ EOF
 
     fi
 
-    if test -f "$line/added"; then
-      rm -f "$line/added"
+    if test -f "$line/.added"; then
+      rm -f "$line/.added"
     else
-      rm -f "$line/updated"
+      rm -f "$line/.updated"
     fi
 
   fi
@@ -229,7 +230,7 @@ while read line; do
   cert="$(head -n 1 $line/name.txt)"
 
   # remove old certificates
-  if test -f "$line/removed"; then
+  if test -f "$line/.removed"; then
 
     target=$(readlink -f "$line")
 
@@ -249,11 +250,12 @@ EOF
 
     # remove folder
     rm -f "${target}"/*
+    rm -f "${target}"/.removed
     rmdir "${target}"
     rm -f "${line}"
 
   # add new certificates
-  elif test -f "$line/added"; then
+  elif test -f "$line/.added"; then
 
     usercerts=
 
@@ -308,7 +310,7 @@ uniqueMember: cn=${cert},ou=${userroot},ou=Replication Managers,cn=config
 
 EOF
 
-    rm -f "$line/added"
+    rm -f "$line/.added"
 
   # refresh certificates
   else
@@ -354,7 +356,7 @@ replace: nsCertSubjectDN
 ${usersubjects}-
 EOF
 
-    rm -f "$line/updated"
+    rm -f "$line/.updated"
 
   fi
 
@@ -401,7 +403,7 @@ while read line; do
   fi
 
   # remove old agreements
-  if test -f "$line/removed"; then
+  if test -f "$line/.removed"; then
 
     target=$(readlink -f "$line")
 
@@ -426,6 +428,7 @@ while read line; do
 
     # remove folder
     rm -f "${target}"/*
+    rm -f "${target}"/.removed
     rmdir "${target}"
     rm -f "${line}"
 
@@ -470,7 +473,7 @@ while read line; do
     fi
 
     # add new agreements
-    if test -f "$line/added"; then
+    if test -f "$line/.added"; then
 
       dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt create --suffix "${suffix}" --host "${hostname}" --port "${port}" --conn-protocol "LDAPS" --bind-method "SSLCLIENTAUTH"${options} "${agreement}"
 
@@ -478,10 +481,10 @@ while read line; do
         dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt disable --suffix "${suffix}" "${agreement}"
       fi
 
-      rm -f "$line/added"
+      rm -f "$line/.added"
 
     # update existing agreements
-    elif test -f "$line/updated"; then
+    elif test -f "$line/.updated"; then
 
       rm -f "$line/error"
 
@@ -493,7 +496,7 @@ while read line; do
         dsconf "ldapi://%2frun%2fslapd-${instance}.socket" repl-agmt enable --suffix "${suffix}" "${agreement}"
       fi
 
-      rm -f "$line/updated"
+      rm -f "$line/.updated"
 
     fi
 

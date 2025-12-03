@@ -37,7 +37,7 @@ while read line; do
   suffix="$(head $line/suffix.txt)"
 
   # remove old instances
-  if test -f "$line/removed"; then
+  if test -f "$line/.removed"; then
 
     # remove instance, but only if no error was created making the database
     if test ! -f "$line/error" -a -d "/etc/dirsrv/slapd-${instance}"; then
@@ -67,11 +67,12 @@ EOF
 
     # remove folder
     rm -f "${target}"/*
+    rm -f "${target}"/.removed
     rmdir "${target}"
     rm -f "${line}"
 
   # add new instances
-  elif test -f "$line/added"; then
+  elif test -f "$line/.added"; then
 
     if test ! -d "/etc/dirsrv/slapd-${instance}"; then
       logger -t dirsrv-postdiscovery "ignoring directory server backend ${bename} with suffix ${suffix}: instance ${instance} does not exist."
@@ -84,7 +85,7 @@ EOF
     if test ! -f "$line/error"; then
       logger -t "dirsrv-postdiscovery@${instance}" "added directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
 
-      rm -f "$line/added"
+      rm -f "$line/.added"
 
     else
       logger -t "dirsrv-postdiscovery@${instance}" "failed to add directory server backend ${bename} with suffix ${suffix} to instance ${instance}."
@@ -94,9 +95,9 @@ EOF
     fi
 
   # update instances
-  elif test -f "$line/updated"; then
+  elif test -f "$line/.updated"; then
 
-    rm -f "$line/updated"
+    rm -f "$line/.updated"
 
   fi
 

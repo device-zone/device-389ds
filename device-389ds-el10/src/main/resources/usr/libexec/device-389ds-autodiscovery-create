@@ -331,7 +331,7 @@ while read line; do
   fi
 
   # remove old instances
-  if test -f "$line/removed"; then
+  if test -f "$line/.removed"; then
 
     logger -t dirsrv-autodiscovery "removing dirsrv server instance ${instance}..."
 
@@ -343,6 +343,7 @@ while read line; do
     # remove folder
     target=$(readlink -f "$line")
     rm -f "${target}"/*
+    rm -f "${target}"/.removed
     rmdir "${target}"
     rm -f "${line}"
 
@@ -350,7 +351,7 @@ while read line; do
     systemctl --no-block stop "dirsrv-postdiscovery@${instance}"
 
   # add new instances
-  elif test -f "$line/added"; then
+  elif test -f "$line/.added"; then
 
     logger -t dirsrv-autodiscovery "creating dirsrv server instance ${instance}..."
     create_instance "${request}" "${instance}" "${line}"
@@ -362,10 +363,10 @@ while read line; do
 
     fi
 
-    rm -f "$line/added"
+    rm -f "$line/.added"
 
   # update instances
-  elif test -f "$line/updated"; then
+  elif test -f "$line/.updated"; then
 
     if test -f "$line/disabled.polar"; then
 
@@ -377,7 +378,7 @@ while read line; do
 
     fi
 
-    rm -f "$line/updated"
+    rm -f "$line/.updated"
 
   # something we depend on changed
   else

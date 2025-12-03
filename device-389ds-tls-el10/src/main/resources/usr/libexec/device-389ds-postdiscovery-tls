@@ -32,7 +32,7 @@ while read line; do
   fi
 
   # remove old instances
-  if test -f "$line/removed"; then
+  if test -f "$line/.removed"; then
 
     target=$(readlink -f "$line")
 
@@ -58,11 +58,12 @@ while read line; do
 
     # remove folder
     rm -f "${target}"/*
+    rm -f "${target}"/.removed
     rmdir "${target}"
     rm -f "${line}"
 
   # add/update new tls?
-  elif test -f "$line/added" -o -f "$line/updated"; then
+  elif test -f "$line/.added" -o -f "$line/.updated"; then
 
     rm -f "$line/error"
 
@@ -160,10 +161,10 @@ while read line; do
 
     fi
 
-    if test -f "$line/added"; then
-      rm -f "$line/added"
+    if test -f "$line/.added"; then
+      rm -f "$line/.added"
     else
-      rm -f "$line/updated"
+      rm -f "$line/.updated"
     fi
 
   # ordinary instance, make sure world can see it
