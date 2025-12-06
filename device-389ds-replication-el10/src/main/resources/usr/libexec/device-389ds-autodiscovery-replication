@@ -16,7 +16,7 @@ umask 0027
 #
 # Walk through each agreement for replication, export certificates as needed.
 #
-find /etc/device/services/ldap/replication/agreement/ -mindepth 1 -maxdepth 1 -type l | \
+find /etc/device/services/ldap/replication/outgoing/ -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
 
   if [ ! -e "$line/suffix.d/instance.d/name.txt" ]; then

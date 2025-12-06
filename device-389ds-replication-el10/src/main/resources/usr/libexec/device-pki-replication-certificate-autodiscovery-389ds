@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #
 # PKI Certificates Autodiscovery - 389ds replication certificate
@@ -13,8 +13,6 @@ if test ! -d /run/dirsrv/; then
   exit 0;
 fi
 
-exec 2> >(logger -t ${0})
-
 request="${1}"
 uuid="${2}"
 
@@ -23,7 +21,7 @@ uuid="${2}"
 
 if test "${request}" == "reload" -o "${request}" == "restart"; then
 
-  find /etc/device/services/ldap/replication/certificate/ -mindepth 1 -maxdepth 1 -type l | \
+  find /etc/device/services/ldap/replication/incoming/ -mindepth 1 -maxdepth 1 -type l | \
   while read line; do
 
     if test ! -f "$line/suffix.d/instance.d/name.txt"; then
