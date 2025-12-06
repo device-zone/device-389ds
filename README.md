@@ -195,7 +195,7 @@ certificate and if necessary full chain and root certificate are available in
 updated immediately, if not running the instance will be updated at next startup.
 
 ```
-[root@server ~]# device services ldap replication certificate add name=upstream tls-dns=upstream.example.com suffix=seawitch-example 
+[root@server ~]# device services ldap replication incoming add name=upstream tls-dns=upstream.example.com suffix=seawitch-example 
 ```
 
 # remove the certificate added above
@@ -203,7 +203,7 @@ updated immediately, if not running the instance will be updated at next startup
 To remove the certificate added above, run this. The user will be updated in the directory.
 
 ```
-[root@server ~]# device services ldap replication certificate remove upstream 
+[root@server ~]# device services ldap replication incoming remove upstream 
 ```
 
 # add replication agreement
@@ -212,7 +212,7 @@ To add a replication agreement called "downstream" that we will replicate the su
 "seawitch-example" to the host "downstream.example.com" on port 636, run this.
 
 ```
-[root@server ~]# device services ldap replication agreement add name=downstream host=downstream.example.com port=636 suffix=seawitch-example 
+[root@server ~]# device services ldap replication outgoing add name=downstream host=downstream.example.com port=636 suffix=seawitch-example 
 ```
 
 # remove replication agreement
@@ -220,6 +220,6 @@ To add a replication agreement called "downstream" that we will replicate the su
 To remove the replication agreement added above, run this.
 
 ```
-[root@server ~]# device services ldap replication agreement remove downstream
+[root@server ~]# device services ldap replication outgoing remove downstream
 ```
 
