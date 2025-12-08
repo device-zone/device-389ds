@@ -3,7 +3,13 @@
 set -e
 umask 0002
 
-OPTIONS="--show suffix --show-table suffix,replica-id,role --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix --required --integer-minimum 1 --integer-maximum 65534 --integer replica-id --select-base /usr/libexec/device/services/ldap/replication/roles.txt --select role"
+OPTIONS="--show suffix \
+         --show-table suffix,replica-id,role \
+         --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix \
+         --required \
+         --integer-minimum 1 --integer-maximum 65534 --integer replica-id \
+         --select-base /usr/libexec/device/services/ldap/replication/roles.txt --select role
+         --lock /etc/device/services/ldap/"
 
 if [ "$1" == "--" ]; then
 

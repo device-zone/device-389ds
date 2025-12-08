@@ -3,7 +3,10 @@
 set -e
 umask 0002
 
-OPTIONS="--set name --hostname name --polar disabled"
+OPTIONS="--set name \
+         --hostname name \
+         --polar disabled \
+         --lock /etc/device/services/ldap/"
 
 if [ "$1" == "--" ]; then
 

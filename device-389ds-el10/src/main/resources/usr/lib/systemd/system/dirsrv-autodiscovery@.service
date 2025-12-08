@@ -8,8 +8,8 @@ After=dirsrv-autodiscovery.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/sequence -s daemon.info -b "/usr/libexec" "device/autodiscovery/389ds.d" start %i
-ExecReload=/usr/bin/sequence -s daemon.info -b "/usr/libexec" "device/autodiscovery/389ds.d" reload %i
+ExecStart=/usr/bin/flock -s /etc/device/services/ldap/ /usr/bin/sequence -s daemon.info -b "/usr/libexec" "device/autodiscovery/389ds.d" start %i
+ExecReload=/usr/bin/flock -s /etc/device/services/ldap/ /usr/bin/sequence -s daemon.info -b "/usr/libexec" "device/autodiscovery/389ds.d" reload %i
 RemainAfterExit=on
 
 [Install]

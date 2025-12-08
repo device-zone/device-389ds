@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -26,7 +26,7 @@ while read line; do
   fi
 
   # remove old instances? skip
-  if test -f "$line/removed"; then
+  if test -f "$line/.removed"; then
     continue;
   fi
 

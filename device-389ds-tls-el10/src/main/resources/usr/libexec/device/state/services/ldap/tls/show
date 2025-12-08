@@ -3,7 +3,14 @@
 set -e
 umask 0002
 
-OPTIONS="--show instance --show-table instance,port,certificate,ca-certificate --port port --symlink-base /etc/pki/tls/certs --symlink-suffix .crt --symlink ca-certificate --required --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance --relation-base /etc/device/system/pki/certificates --relation-name name --relation-suffix .txt --relation certificate"
+OPTIONS="--show instance \
+         --show-table instance,port,certificate,ca-certificate \
+         --port port \
+         --symlink-base /etc/pki/tls/certs --symlink-suffix .crt --symlink ca-certificate \
+         --required \
+         --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance \
+         --relation-base /etc/device/system/pki/certificates --relation-name name --relation-suffix .txt --relation certificate \
+         --lock /etc/device/services/ldap/"
 
 if [ "$1" == "--" ]; then
 

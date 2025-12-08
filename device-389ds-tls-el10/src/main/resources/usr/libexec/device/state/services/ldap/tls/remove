@@ -3,7 +3,9 @@
 set -e
 umask 0002
 
-OPTIONS="--mark instance --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance"
+OPTIONS="--mark instance \
+         --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance \
+         --lock /etc/device/services/ldap/"
 
 if [ "$1" == "--" ]; then
 

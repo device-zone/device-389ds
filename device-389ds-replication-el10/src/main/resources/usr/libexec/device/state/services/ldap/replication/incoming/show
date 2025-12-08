@@ -3,7 +3,13 @@
 set -e
 umask 0002
 
-OPTIONS="--show name --hostname name --show-table name,certificate,suffix --required --relation-base /etc/device/system/pki/certificates --relation-name name --relation-suffix .txt --relation certificate --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix"
+OPTIONS="--show name \
+         --hostname name \
+         --show-table name,certificate,suffix \
+         --required \
+         --relation-base /etc/device/system/pki/certificates --relation-name name --relation-suffix .txt --relation certificate \
+         --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix \
+         --lock /etc/device/services/ldap/"
 
 if [ "$1" == "--" ]; then
 

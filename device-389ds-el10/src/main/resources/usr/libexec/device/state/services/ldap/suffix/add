@@ -3,10 +3,12 @@
 set -e
 umask 0002
 
-tmpdir="$(mktemp -d)"
-trap 'rm -rf -- "${tmpdir}"' EXIT
-
-OPTIONS="--add name --hostname name --required --hostname userroot --distinguished-name suffix --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance"
+OPTIONS="--add name \
+         --hostname name \
+         --required --hostname userroot \
+         --distinguished-name suffix \
+         --relation-base /etc/device/services/ldap/instance --relation-name name --relation-suffix .txt --relation instance
+         --lock /etc/device/services/ldap/"
 
 if [ "$1" == "--" ]; then
 

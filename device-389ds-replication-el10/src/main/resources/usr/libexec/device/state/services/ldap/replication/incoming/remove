@@ -3,7 +3,9 @@
 set -e
 umask 0002
 
-OPTIONS="--mark name --hostname name"
+OPTIONS="--mark name \
+         --hostname name \
+         --lock /etc/device/services/ldap/"
 
 if [ "$1" == "--" ]; then
 

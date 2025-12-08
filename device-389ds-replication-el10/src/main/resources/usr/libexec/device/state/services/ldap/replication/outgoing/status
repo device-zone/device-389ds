@@ -26,7 +26,9 @@ do_sync() {
 }
 export -f do_sync
 
-OPTIONS="--exec name --hostname name"
+OPTIONS="--exec name \
+         --hostname name \
+         --lock /etc/device/services/ldap/"
 
 if [ "$1" == "--" ]; then
 

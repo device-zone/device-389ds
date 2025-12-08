@@ -5,10 +5,12 @@
 set -e
 umask 0002
 
-tmpdir="$(mktemp -d)"
-trap 'rm -rf -- "${tmpdir}"' EXIT
-
-OPTIONS="--add name --hostname name --required --relation-base /etc/device/system/pki/certificates --relation-name name --relation-suffix .txt --relation certificate --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix"
+OPTIONS="--add name \
+         --hostname name \
+         --required \
+         --relation-base /etc/device/system/pki/certificates --relation-name name --relation-suffix .txt --relation certificate \
+         --relation-base /etc/device/services/ldap/suffix --relation-name name --relation-suffix .txt --relation suffix \
+         --lock /etc/device/services/ldap/"
 
 if [ "$1" == "--" ]; then
 
