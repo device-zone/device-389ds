@@ -107,9 +107,8 @@ while read line; do
 
     logger -t dirsrv-postdiscovery "removed replication manager on instance ${instance}."
 
-    # remove folder
-    rm -f "${target}"/*
-    rm -f "${target}"/.removed
+    # remove folder safely
+    rm -f "${target}"/* "${target}"/.removed "${target}"/.added "${target}"/.updated
     rmdir "${target}"
     rm -f "${line}"
 
@@ -201,7 +200,7 @@ done
 # NOTE: you need to restart the service after every change to the certificates list, until
 # this bug is fixed: https://github.com/389ds/389-ds-base/issues/6106
 #
-find /etc/device/services/ldap/replication/certificate/ -mindepth 1 -maxdepth 1 -type l | \
+find /etc/device/services/ldap/replication/incoming/ -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
 
   if [ ! -e "$line/suffix.d/instance.d/name.txt" ]; then
@@ -248,9 +247,8 @@ EOF
 
     ldapdelete -H "ldapi://%2frun%2fslapd-${instance}.socket" -Y EXTERNAL "cn=${cert},ou=${userroot},ou=Replication Managers,cn=config" || true
 
-    # remove folder
-    rm -f "${target}"/*
-    rm -f "${target}"/.removed
+    # remove folder safely
+    rm -f "${target}"/* "${target}"/.removed "${target}"/.added "${target}"/.updated
     rmdir "${target}"
     rm -f "${line}"
 
@@ -366,7 +364,7 @@ done
 #
 # Walk through each agreement for replication, enable or disable as needed.
 #
-find /etc/device/services/ldap/replication/agreement/ -mindepth 1 -maxdepth 1 -type l | \
+find /etc/device/services/ldap/replication/outgoing/ -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
 
   if [ ! -e "$line/suffix.d/instance.d/name.txt" ]; then
@@ -426,9 +424,8 @@ while read line; do
 
     fi
 
-    # remove folder
-    rm -f "${target}"/*
-    rm -f "${target}"/.removed
+    # remove folder safely
+    rm -f "${target}"/* "${target}"/.removed "${target}"/.added "${target}"/.updated
     rmdir "${target}"
     rm -f "${line}"
 

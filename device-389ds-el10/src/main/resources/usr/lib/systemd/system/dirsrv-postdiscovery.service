@@ -6,8 +6,8 @@ After=dirsrv-autodiscovery.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/flock -s /etc/device/services/ldap/ /usr/libexec/device-postdiscovery/389ds start
-ExecReload=/usr/bin/flock -s /etc/device/services/ldap/ /usr/libexec/device-postdiscovery/389ds reload
+ExecStart=/usr/bin/flock -s /etc/device/services/ldap/ /usr/libexec/device/postdiscovery/389ds start
+ExecReload=/usr/bin/flock -s /etc/device/services/ldap/ /usr/libexec/device/postdiscovery/389ds reload
 RemainAfterExit=on
 
 [Install]

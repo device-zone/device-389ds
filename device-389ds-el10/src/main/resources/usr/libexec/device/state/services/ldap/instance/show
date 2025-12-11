@@ -12,11 +12,11 @@ OPTIONS="--show name \
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set ${OPTIONS} "$@"
+  /usr/libexec/device-tool ${OPTIONS} "$@"
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set ${OPTIONS} "$@"
+  /usr/libexec/device-tool ${OPTIONS} "$@"
 
 fi
 

@@ -340,10 +340,9 @@ while read line; do
     remove_instance "${request}" "${instance}" "${line}"
     logger -t dirsrv-autodiscovery "removed dirsrv server instance ${instance}."
 
-    # remove folder
+    # remove folder safely
     target=$(readlink -f "$line")
-    rm -f "${target}"/*
-    rm -f "${target}"/.removed
+    rm -f "${target}"/* "${target}"/.removed "${target}"/.added "${target}"/.updated
     rmdir "${target}"
     rm -f "${line}"
 

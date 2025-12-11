@@ -32,11 +32,11 @@ OPTIONS="--exec name \
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set ${OPTIONS} --command "/bin/bash -c do_sync" "$@"
+  /usr/libexec/device-tool ${OPTIONS} --command "/bin/bash -c do_sync" "$@"
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set ${OPTIONS} "$@"
+  /usr/libexec/device-tool ${OPTIONS} "$@"
 
 fi
 

@@ -65,9 +65,8 @@ EOF
       fi
     fi
 
-    # remove folder
-    rm -f "${target}"/*
-    rm -f "${target}"/.removed
+    # remove folder safely
+    rm -f "${target}"/* "${target}"/.removed "${target}"/.added "${target}"/.updated
     rmdir "${target}"
     rm -f "${line}"
 

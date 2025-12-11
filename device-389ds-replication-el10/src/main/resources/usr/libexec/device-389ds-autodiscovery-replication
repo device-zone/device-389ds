@@ -33,7 +33,7 @@ while read line; do
   agreement="$(head -n 1 $line/name.txt)"
 
   # remove old agreements
-  if test -f "$line/removed"; then
+  if test -f "$line/.removed"; then
 
     if test -L "$line/client-certificate.d"; then
 
