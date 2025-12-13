@@ -98,7 +98,7 @@ while read line; do
 
       fi
 
-      if test "$line/ca-certificate.crt" -nt "/etc/dirsrv/slapd-${instance}/cert9.db"; then
+      if test $(stat -c %Y "$line/ca-certificate.crt") -gt $(stat -c %Y "/etc/dirsrv/slapd-${instance}/cert9.db"); then
 
         rm -f "/run/dirsrv/slapd-${instance}-server-ca-certificate.yaml"
 
