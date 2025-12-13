@@ -20,7 +20,7 @@
   <groupId>zone.device.platform.el10</groupId>
   <version>2.0.0-SNAPSHOT</version>
   <packaging>rpm</packaging>
-  <name>device 389ds applicance for el9</name>
+  <name>device 389ds applicance for el10</name>
   <description>Packaging for the 389ds appliance for ${release.distribution}</description>
   <inceptionYear>2022</inceptionYear>
 
