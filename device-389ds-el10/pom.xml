@@ -35,6 +35,14 @@
         </includes>
       </resource>
       <resource>
+        <targetPath>etc</targetPath>
+        <directory>src/main/resources/etc</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+      <resource>
         <targetPath>usr</targetPath>
         <directory>src/main/resources/usr</directory>
         <filtering>true</filtering>
@@ -82,6 +90,19 @@
             <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
           </defineStatements>
           <mappings>
+            <mapping>
+              <directory>/etc/profile.d</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/etc/profile.d/device-status-389ds.sh</location>
+                  <destination>device-status-389ds.sh</destination>
+                </source>
+              </sources>
+            </mapping>
             <mapping>
               <directory>/usr/libexec/device/autodiscovery</directory>
               <directoryIncluded>false</directoryIncluded>
@@ -247,6 +268,39 @@
                 </source>
               </sources>
             </mapping>
+            <mapping>
+              <directory>/usr/libexec/device/status</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/usr/libexec/device-389ds-status</location>
+                  <destination>389ds</destination>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
+              <directory>/usr/libexec/device/status/389ds.d</directory>
+              <directoryIncluded>true</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+            </mapping>
+            <mapping>
+              <directory>/usr/libexec/device/status/389ds.d</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/classes/usr/libexec/device-389ds-status-tls</location>
+                  <destination>20-tls</destination>
+                </source>
+              </sources>
+            </mapping>
           </mappings>
           <postinstallScriptlet>
             <scriptFile>target/classes/postinstall</scriptFile>
@@ -261,7 +315,8 @@
             <require>retry</require>
             <require>expect</require>
             <require>device &gt;= 1.0.0</require>
-            <require>sequence &gt;= 1.1.0</require>
+            <require>/usr/bin/sequence</require>
+            <require>/usr/bin/flock</require>
           </requires>
         </configuration>
       </plugin>

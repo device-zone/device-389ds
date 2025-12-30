@@ -13,7 +13,7 @@ request="${1}"
 
 
 # All instances
-find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
+/usr/bin/flock -s /etc/device/services/ldap/ find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l | \
 while read line; do
 
   if test ! -f "$line/name.txt"; then

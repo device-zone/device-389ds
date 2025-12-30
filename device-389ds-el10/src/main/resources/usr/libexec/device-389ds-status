@@ -1,0 +1,47 @@
+#!/bin/sh
+
+#
+# 389ds Server Status
+# ===================
+#
+# This script generates a dynamic status of the configuration.
+
+set -e
+
+
+echo
+echo "LDAP Server:"
+
+# find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l
+while read line; do
+
+  if test ! -f "$line/name.txt"; then
+    continue;
+  fi
+  instance="$(head $line/name.txt)"
+
+  if test -f "$line/disabled.polar"; then
+    echo "- dirsrv@${instance}: disabled"
+  elif systemctl is-failed --quiet dirsrv-autodiscovery@${instance}.service; then
+    echo "- dirsrv@${instance}: autodiscovery-failed"
+  elif systemctl is-active --quiet dirsrv-autodiscovery@${instance}.service; then
+    echo -n "- dirsrv@${instance}: "
+    SYSTEMD_COLORS=1 systemctl is-active "dirsrv@${instance}" || true
+  elif systemctl is-enabled --quiet dirsrv-autodiscovery@${instance}.service; then
+    echo "- dirsrv@${instance}: scheduled-for-startup"
+  else
+    echo "- dirsrv@${instance}: autodiscovery-disabled"
+  fi
+
+  echo "  url: ldapi://%2frun%2fslapd-${instance}.socket"
+
+  found="found"
+
+  /usr/bin/sequence "/usr/libexec/device/status/389ds.d" "${instance}" "${line}"
+
+done < <(find /etc/device/services/ldap/instance/ -mindepth 1 -maxdepth 1 -type l)
+
+if test -z "found"; then
+  echo "- Status: no LDAP instances exist"
+fi
+

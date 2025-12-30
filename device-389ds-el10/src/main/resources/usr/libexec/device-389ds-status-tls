@@ -1,0 +1,87 @@
+#!/bin/sh
+
+
+if [ $# -eq 2 ]; then
+
+  instance="${1}"
+
+  #
+  # Handle TLS
+
+  # find /etc/device/services/ldap/tls/ -mindepth 1 -maxdepth 1 -type l
+  while read line; do
+
+    if test ! -f "$line/instance.d/name.txt" -o "${instance}" != "$(head $line/instance.d/name.txt)"; then
+      continue;
+    fi
+
+    instance="$(head -n 1 $line/instance.d/name.txt)"
+
+    echo
+    echo "  - TLS + ${instance}:"
+
+    if test -f "$line/certificate.d/filter-dns.txt"; then
+      servername=$(head -n 1 $line/certificate.d/filter-dns.txt)
+    else
+      servername=$(hostname -f)
+    fi
+
+#    if test -f "${line}/listen.d/port.txt"; then
+#      echo "  - http://${servername}:$(head -n 1 ${line}/listen.d/port.txt)"
+#    fi
+    if test -f "${line}/port.txt"; then
+      tlsport="$(head -n 1 ${line}/port.txt)"
+      url="ldaps://${servername}:${tlsport}"
+
+      echo "    url: ${url}"
+      echo
+      echo "    Certificates:"
+
+      redwax-tool --pem-in="/etc/pki/tls/private/*" \
+                  --pem-in="/etc/pki/tls/certs/ca-bundle.trust.crt" \
+                  --pem-in="/etc/pki/tls/certs/*.pem" \
+                  --filter=search \
+                  --filter-hostname="${servername}" \
+                  --filter-purpose=sslserver \
+                  --filter-current \
+                  --quiet \
+                  --format-out json \
+                  --metadata-threshold 30 \
+                  --metadata-out - | \
+      jq -r '
+
+def colors:
+ {
+ "invert": "\u001b[7m",
+ "black": "\u001b[30m",
+ "red": "\u001b[31m",
+ "green": "\u001b[32m",
+ "yellow": "\u001b[33m",
+ "blue": "\u001b[34m",
+ "magenta": "\u001b[35m",
+ "cyan": "\u001b[36m",
+ "white": "\u001b[37m",
+ "reset": "\u001b[0m",
+};
+
+. | ( .Certificates[] | 
+"    - subject: " + .Data.Subject ,
+"      issuer: " + .Data.Issuer,
+"      origin: " + .Origin,
+if ( .Data.Validity.Error != null ) then "      error: " + colors.red + colors.invert + .Data.Validity.Error + colors.reset else empty end,
+if ( .Data.Validity.Warning != null ) then "      warning: " + colors.yellow + colors.invert + .Data.Validity.Warning + colors.reset else empty end,
+if ( .Data.Validity.Status != null ) then "      status: " + colors.green + .Data.Validity.Status + colors.reset else empty end
+
+) // "    - error: " + colors.red + colors.invert + "No certificate found under /etc/pki/tls to match \"'${servername}'\"" + colors.reset
+'
+
+      if test ${PIPESTATUS[0]} -ne 0; then
+        echo "    - error: No certificate found under /etc/pki/tls to match '${servername}'"
+      fi
+
+    fi
+
+  done < <(find /etc/device/services/ldap/tls/ -mindepth 1 -maxdepth 1 -type l)
+
+fi
+
